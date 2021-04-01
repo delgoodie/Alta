@@ -531,11 +531,11 @@ float largeN;
 [numthreads(1,1,1)]
 void Noise3D (uint3 id : SV_DispatchThreadID)
 {
-    int index = id.x * size * size + id.y * size + id.z;
+    int index = (int)id.x * size * size + (int)id.y * size + (int)id.z;
     int3 world = int3(
-        id.x + X * (size - 1),
-        id.y + Y * (size - 1),
-        id.z + Z * (size - 1)
+        (int)id.x + X * (size - 1),
+        (int)id.y + Y * (size - 1),
+        (int)id.z + Z * (size - 1)
     );
 
     float3 p = float3(world.x + offX, world.y + offY, world.z + offZ);
