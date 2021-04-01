@@ -1,0 +1,103 @@
+#pragma kernel ChipMarkup
+
+const int Dirt = 0;
+const int Rock = 1;
+const int Grass = 2;
+const int Air = 3;
+const int Grey = 4;
+
+const bool Opaque[] = {
+    true,
+    true,
+    true,
+    false,
+    false
+};
+
+int iso(int i){
+    return (i & 0xff000000) >> 24;
+}
+int type(int i){
+    return (i & 0x00ff0000) >> 16;
+}
+int data(int i){
+    return i & 0x0000ffff;
+}
+
+int iso(int i, int iso){
+    return (i & 0x00ffffff) | (iso << 24);
+}
+
+int type(int i, int type){
+    return (i & 0xff00ffff) | (type << 16);
+}
+
+int data(int i, int data){
+    return (i & 0xffff0000) | data;
+}
+
+int3 indexToPos(int i, int size)
+    {
+        int s1 = i / size;
+        int s2 = s1 / size;
+        int3 pos = int3(s2, s1 % size, 0);
+        pos.z = i - pos.x * size * size - pos.y * size;
+        return pos;
+    }
+
+int sqrMag(int3 a, int3 b){
+    return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
+}
+
+
+RWStructuredBuffer<int> chips;
+int size;
+int chipsLength;
+
+[numthreads(1,1,1)]
+void ChipMarkup (uint3 id : SV_DispatchThreadID)
+{
+    int index = id.x * size * size + id.y * size + id.z; 
+    if(iso(chips[index]) > 0x80)
+        chips[index] = type(chips[index], (id.x + id.y * 4 - id.z * 2 + id.x * id.x - id.y * id.z) % 3);
+    else
+        chips[index] = type(chips[index], 3);
+
+    if(type(chips[index]) != 3) return;
+    
+    bool grey = true;
+    for(int i = 0; i < chipsLength; i++){
+        int3 pos = indexToPos(i, size);
+        if(iso(chips[i]) > 0x80 && sqrMag(pos, id) < 8 * 8) grey = false;
+    }
+    if(grey)  chips[index] = type(chips[index], 4);
+    /*
+    int bubble[17] = {
+        //first layer  #12
+        id.z * size * size + (id.y + 1) * size + id.x,
+        id.z * size * size + id.y * size + (id.x + 1),
+        id.z * size * size + (id.y - 1) * size + id.x,
+        id.z * size * size + id.y * size + (id.x - 1),
+        id.z * size * size + (id.y + 1) * size + (id.x + 1),
+        id.z * size * size + (id.y + 1) * size + (id.x - 1),
+        id.z * size * size + (id.y - 1) * size + (id.x + 1),
+        id.z * size * size + (id.y - 1) * size + (id.x - 1),  
+        id.z * size * size + (id.y + 2) * size + id.x,  
+        id.z * size * size + (id.y - 2) * size + id.x,  
+        id.z * size * size + id.y * size + (id.x + 2),  
+        id.z * size * size + id.y * size + (id.x - 2),  
+        //second layer  #4
+        (id.z + 1) * size * size + (id.y + 1) * size + id.x,
+        (id.z + 1) * size * size + id.y * size + (id.x + 1),
+        (id.z + 1) * size * size + (id.y - 1) * size + id.x,
+        (id.z + 1) * size * size + id.y * size + (id.x - 1),
+        //third layer  #1
+        (id.z + 2) * size * size + id.y * size + id.x,
+    };
+
+    for(int i = 0; i < 17; i++){
+        if(bubble[i] > chipsLength - 1 || bubble[i] < 0 || iso(chips[bubble[i]]) > 0x80) continue;
+        chips[bubble[i]] = type(chips[bubble[i]], 4);
+    }
+    */
+}

@@ -35,6 +35,7 @@ class GameManager : MonoBehaviour
         count4 = 0;
         count5 = 0;
         count6 = 0;
+        Debug.Log("GameManager Awake");
     }
 
     private void Update()

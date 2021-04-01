@@ -1,6 +1,22 @@
 {
     "git.ignoreLimitWarning": true,
     "files.exclude": {
-        "**/*.meta": true
+        "Library/": true,
+        "Logs/": true,
+        "obj/": true,
+        "Temp/": true,
+        "Packages/": true,
+        "ProjectSettings/": true,
+        "UserSettings/": true,
+        "**/*.meta": true,
+        ".gitattributes": true,
+        ".gitignore": true,
+        "Alta.sln": true,
+        "Assembly-CSharp-Editor-firstpass.csproj": true,
+        "Assembly-CSharp-Editor.csproj": true,
+        "Assembly-CSharp.csproj": true,
+        "README.md": true,
+        "Assets/Scenes/": true,
+        "Assets/Resources/Prefabs/": true,
     }
 }

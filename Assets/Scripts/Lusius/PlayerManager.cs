@@ -3,11 +3,8 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
-    public Transform spawnPoint;
     public GameObject playerPrefab;
-    private GameObject orbPrefab;
     private GameObject player;
-    private GameObject orb;
     public bool activePlayer;
 
     private void Awake()
@@ -15,7 +12,7 @@ public class PlayerManager : MonoBehaviour
         Instance = this;
         activePlayer = false;
         playerPrefab = Resources.Load("Prefabs/Player") as GameObject;
-        orbPrefab = Resources.Load("Prefabs/Orb") as GameObject;
+        Debug.Log("PlayerManager Awake");
     }
 
     private void Update()
@@ -24,8 +21,7 @@ public class PlayerManager : MonoBehaviour
 
     public void CreatePlayer()
     {
-        player = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-        orb = Instantiate(orbPrefab, spawnPoint.position + Vector3.forward * 2f, Quaternion.identity);
+        player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         activePlayer = true;
     }
 
@@ -37,11 +33,6 @@ public class PlayerManager : MonoBehaviour
     public GameObject GetPlayer()
     {
         return player;
-    }
-
-    public GameObject GetOrb()
-    {
-        return orb;
     }
 
     private void OnDrawGizmos()

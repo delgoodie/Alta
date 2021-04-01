@@ -28,6 +28,7 @@ public class MarchManager : MonoBehaviour
         Shader = Resources.Load("Compute Shaders/March") as ComputeShader;
         Kernel = Shader.FindKernel("March");
         noMarch = false;
+        Debug.Log("MarchManager Awake");
     }
 
     private void Update()

@@ -1,0 +1,16 @@
+﻿#pragma kernel CombineVerticies
+
+RWStructuredBuffer<float3> verticies;
+RWStructuredBuffer<int> triangles;
+
+[numthreads(1,1,1)]
+void CombineVerticies (uint3 id : SV_DispatchThreadID)
+{
+    if(id.x == 0) return;
+    for(int i = 0; i < triangles[id.x]; i++){
+        if(verticies[i].x == verticies[triangles[id.x]].x && verticies[i].y == verticies[triangles[id.x]].y && verticies[i].z == verticies[triangles[id.x]].z){
+            triangles[id.x] = i;
+            return;
+        }
+    }
+}
