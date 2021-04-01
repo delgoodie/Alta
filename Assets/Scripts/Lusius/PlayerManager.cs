@@ -12,16 +12,15 @@ public class PlayerManager : MonoBehaviour
         Instance = this;
         activePlayer = false;
         playerPrefab = Resources.Load("Prefabs/Player") as GameObject;
-        Debug.Log("PlayerManager Awake");
     }
 
     private void Update()
     {
     }
 
-    public void CreatePlayer()
+    public void CreatePlayer(Vector3 position, Quaternion rotation)
     {
-        player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        player = Instantiate(playerPrefab, position, rotation);
         activePlayer = true;
     }
 

@@ -3,10 +3,10 @@
 [RequireComponent(typeof(Marcher))]
 public class Chunk : MonoBehaviour, IMarch
 {
+    [HideInInspector]
     public Marcher marcher;
     public Vector3Int position;
     public GameObject[] plants;
-    public GameObject[] monsters;
     private ComputeShader MarkupShader;
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
@@ -20,7 +20,7 @@ public class Chunk : MonoBehaviour, IMarch
 
             for (int i = 0; i < marcher.chips.Length; i++)
             {
-                if (marcher.chips[i].type == 4) // || marcher.chips[i].type == Chips.Grey
+                if (marcher.chips[i].type == 4)
                 {
                     Gizmos.color = Color.black;
                     Gizmos.DrawCube(marcher.PosToWorld(marcher.IndexToPos(i)), Vector3.one);
@@ -42,7 +42,6 @@ public class Chunk : MonoBehaviour, IMarch
 
     public void Init(Vector3Int _position)
     {
-        Debug.Log("Chunk Init");
         position = _position;
         marcher.Init(true);
     }

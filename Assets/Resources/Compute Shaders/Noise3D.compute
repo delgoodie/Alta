@@ -518,22 +518,28 @@ float snormal(float snoise) {
 
 RWStructuredBuffer<int> chips;
 int size;
-int chunkX;
-int chunkY;
-int chunkZ;
+int X;
+int Y;
+int Z;
+
+int offX;
+int offY;
+int offZ;
+
+float largeN;
 
 [numthreads(1,1,1)]
 void Noise3D (uint3 id : SV_DispatchThreadID)
 {
     int index = id.x * size * size + id.y * size + id.z;
     int3 world = int3(
-        id.x + chunkX * (size - 1),
-        id.y + chunkY * (size - 1),
-        id.z + chunkZ * (size - 1)
+        id.x + X * (size - 1),
+        id.y + Y * (size - 1),
+        id.z + Z * (size - 1)
     );
 
-    float3 p = float3(world.x + 494334, world.y + 483544, world.z + 4875271);
-    p *= float3(.04, .05, .04);
+    float3 p = float3(world.x + offX, world.y + offY, world.z + offZ);
+    p *= float3(largeN, largeN, largeN);
     
     float s = snoise(p);
 

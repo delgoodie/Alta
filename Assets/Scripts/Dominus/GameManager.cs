@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
+
+[RequireComponent(typeof(MarchManager))]
+[RequireComponent(typeof(PlayerManager))]
+[RequireComponent(typeof(ChunkManager))]
 class GameManager : MonoBehaviour
 {
-    public short tickSpan;
+    public int tickSpan;
     public int tick;
     public bool tick1;
     public bool tick2;
@@ -12,12 +16,12 @@ class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
-    private short countT;
-    private short count2;
-    private short count3;
-    private short count4;
-    private short count5;
-    private short count6;
+    private int countT;
+    private int count2;
+    private int count3;
+    private int count4;
+    private int count5;
+    private int count6;
 
     private void Awake()
     {
@@ -35,13 +39,16 @@ class GameManager : MonoBehaviour
         count4 = 0;
         count5 = 0;
         count6 = 0;
-        Debug.Log("GameManager Awake");
     }
 
+    private void Start()
+    {
+        ChunkManager.Instance.ComputeChunkUpdate(Vector3Int.zero);
+    }
     private void Update()
     {
         TickHandler();
-        if (!PlayerManager.Instance.activePlayer && MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer();
+        if (!PlayerManager.Instance.activePlayer && MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
     }
 
     private void TickHandler()
@@ -94,4 +101,12 @@ class GameManager : MonoBehaviour
             tick6 = false;
         }
     }
+}
+
+
+struct GameStartData
+{
+    Vector3 playerPosition;
+    Quaternion playerRotation;
+
 }
