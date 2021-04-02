@@ -504,8 +504,8 @@ int clampIso(int iso){
     return iso;
 }
 
-int randomSolid(float3 p) {
-    return (int)(1.5 * (snoise(p) + 1));
+int randomSolid(float3 p, int mi, int ma) {
+    return (int)(((snoise(p * .3) + 1) * .5) * (float)(ma - mi + 1) + mi);
 }
 
 int snoiseToIso(float snoise){
@@ -525,6 +525,10 @@ int Z;
 int offX;
 int offY;
 int offZ;
+
+int minType;
+int maxType;
+int emptyType;
 
 float largeN;
 
@@ -549,6 +553,8 @@ void Noise3D (uint3 id : SV_DispatchThreadID)
     
     chips[index] = iso(chips[index], snoiseToIso(s + .04));
     
-    if(iso(chips[index]) > 0x80) chips[index] = type(chips[index], randomSolid(p * 2));   
-    else chips[index] = type(chips[index], 3);   
+    if(iso(chips[index]) > 0x80){
+        chips[index] = type(chips[index],  randomSolid(world * 2, minType, maxType));   
+
+    } else chips[index] = type(chips[index], emptyType);   
 }

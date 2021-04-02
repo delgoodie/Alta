@@ -60,6 +60,7 @@ public class Chunk : MonoBehaviour, IMarch
 
     public void Markup()
     {
+        return;
         //ChunkManager.Instance.Markup(position);
         //return;
         chipsBuffer = new ComputeBuffer(marcher.chips.Length, sizeof(int));

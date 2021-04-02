@@ -86,6 +86,10 @@ public class ChunkManager : MonoBehaviour
         NoiseShader.SetInt("offY", Offset.y);
         NoiseShader.SetInt("offZ", Offset.z);
 
+        NoiseShader.SetInt("minType", 1);
+        NoiseShader.SetInt("maxType", 3);
+        NoiseShader.SetInt("emptyType", 0);
+
         NoiseShader.SetFloat("largeN", LargeNoise);
 
         NoiseShader.Dispatch(NoiseKernel, Size, Size, Size);
