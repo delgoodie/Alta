@@ -504,19 +504,21 @@ int clampIso(int iso){
     return iso;
 }
 
+float snormal(float snoise) {  //snoise outputs [-1, 1], snormal converts to [0, 1]
+    return clamp01((snoise + 1.0) / 2.0);
+}
+
 int randomSolid(float3 p, int mi, int ma) {
-    return (int)(((snoise(p * .3) + 1) * .5) * (float)(ma - mi + 1) + mi);
+    return (int)(snormal(snoise(p)) * (float)(ma - mi + 1) + mi);
 }
 
-int snoiseToIso(float snoise){
-    return (int)((snoise + 1) * 0x80);
-}
-
-float snormal(float snoise) {
-    return (snoise + 1) / 2;
+int normalToByte(float snoise){
+    return (int)(snoise * 0xFF);
 }
 
 RWStructuredBuffer<int> chips;
+RWStructuredBuffer<float4> octaves;
+
 int size;
 int X;
 int Y;
@@ -530,7 +532,8 @@ int minType;
 int maxType;
 int emptyType;
 
-float largeN;
+float typeN;
+int octaveSize;
 
 [numthreads(1,1,1)]
 void Noise3D (uint3 id : SV_DispatchThreadID)
@@ -542,19 +545,21 @@ void Noise3D (uint3 id : SV_DispatchThreadID)
         (int)id.z + Z * (size - 1)
     );
 
+    float isoValue = 0;
+
     float3 p = float3(world.x + offX, world.y + offY, world.z + offZ);
-    p *= float3(largeN, largeN, largeN);
+    for(int i=0;i<octaveSize;i++) {
+        isoValue += snormal(snoise(p * float3(octaves[i].x, octaves[i].y, octaves[i].z))) * octaves[i].w;
+    }
     
-    float s = snoise(p);
-
-    s *= 1.4 * snoise(float3(1, world.y * .03, 1));
-    s += .1 * snoise(float3(world.x * .006, 1, world.x * .006));
+    // s *= 1.4 * snoise(float3(1, world.y * .03, 1));
+    // s += .1 * snoise(float3(world.x * .006, 1, world.x * .006));
 
     
-    chips[index] = iso(chips[index], snoiseToIso(s + .04));
+    chips[index] = iso(chips[index], normalToByte(isoValue));
     
     if(iso(chips[index]) > 0x80){
-        chips[index] = type(chips[index],  randomSolid(world * 2, minType, maxType));   
+        chips[index] = type(chips[index],  randomSolid(world * typeN, minType, maxType));   
 
     } else chips[index] = type(chips[index], emptyType);   
 }

@@ -10,7 +10,9 @@ public class ChunkManager : MonoBehaviour
     public int Size;
     [Header("Noise")]
     public Vector3Int Offset;
-    public float LargeNoise;
+    public float TypeNoise;
+    public Vector4[] NoiseOctaves;
+    public bool RunChunkUpdate;
 
     [HideInInspector]
     public static ChunkManager Instance;
@@ -24,7 +26,7 @@ public class ChunkManager : MonoBehaviour
     private List<Vector3Int> UpdateList;
     private ComputeShader NoiseShader;
     private int NoiseKernel;
-    private ComputeBuffer ChipsBuffer;
+    private ComputeBuffer ChipsBuffer, OctaveBuffer;
     private int[] mChips;
     #endregion
 
@@ -39,6 +41,21 @@ public class ChunkManager : MonoBehaviour
         ChunkObject = Resources.Load("Prefabs/ChunkObject") as GameObject;
         NoiseShader = Resources.Load("Compute Shaders/Noise3D") as ComputeShader;
         NoiseKernel = NoiseShader.FindKernel("Noise3D");
+    }
+
+
+    private void Update()
+    {
+        if (RunChunkUpdate)
+        {
+            RunChunkUpdate = false;
+            foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
+            {
+                chunkEntry.Value.marcher.chips = Chipnit(chunkEntry.Key);
+                chunkEntry.Value.marcher.March();
+            }
+        }
+
     }
 
     public void ComputeChunkUpdate(Vector3 pos)
@@ -77,6 +94,11 @@ public class ChunkManager : MonoBehaviour
         ChipsBuffer.SetData(mChips);
         NoiseShader.SetBuffer(NoiseKernel, "chips", ChipsBuffer);
 
+        OctaveBuffer = new ComputeBuffer(NoiseOctaves.Length, sizeof(float) * 4);
+
+        OctaveBuffer.SetData(NoiseOctaves);
+        NoiseShader.SetBuffer(NoiseKernel, "octaves", OctaveBuffer);
+
         NoiseShader.SetInt("size", Size);
         NoiseShader.SetInt("X", p.x);
         NoiseShader.SetInt("Y", p.y);
@@ -86,16 +108,19 @@ public class ChunkManager : MonoBehaviour
         NoiseShader.SetInt("offY", Offset.y);
         NoiseShader.SetInt("offZ", Offset.z);
 
-        NoiseShader.SetInt("minType", 1);
-        NoiseShader.SetInt("maxType", 3);
+        NoiseShader.SetInt("minType", Chips.Dirt);
+        NoiseShader.SetInt("maxType", Chips.Grass);
         NoiseShader.SetInt("emptyType", 0);
 
-        NoiseShader.SetFloat("largeN", LargeNoise);
+        NoiseShader.SetFloat("typeN", TypeNoise);
+        NoiseShader.SetInt("octaveSize", NoiseOctaves.Length);
 
         NoiseShader.Dispatch(NoiseKernel, Size, Size, Size);
 
         ChipsBuffer.GetData(mChips);
+
         ChipsBuffer.Dispose();
+        OctaveBuffer.Dispose();
 
         Chip[] chips = new Chip[Size * Size * Size];
         for (int i = 0; i < mChips.Length; i++)
