@@ -108,8 +108,8 @@ public class ChunkManager : MonoBehaviour
         NoiseShader.SetInt("offY", Offset.y);
         NoiseShader.SetInt("offZ", Offset.z);
 
-        NoiseShader.SetInt("minType", Chips.Dirt);
-        NoiseShader.SetInt("maxType", Chips.Grass);
+        NoiseShader.SetInt("minType", 1);
+        NoiseShader.SetInt("maxType", 23);
         NoiseShader.SetInt("emptyType", 0);
 
         NoiseShader.SetFloat("typeN", TypeNoise);
@@ -196,7 +196,7 @@ public class ChunkManager : MonoBehaviour
         int mkDist = 6;
         for (int x = 0; x < Size; x++) for (int y = 0; y < Size; y++) for (int z = 0; z < Size; z++)
                 {
-                    if (ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type == Chips.Air)
+                    if (ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type == 0)
                     {
                         Vector3Int center = p * Size + new Vector3Int(x, y, z);
                         bool grey = false;
@@ -208,7 +208,7 @@ public class ChunkManager : MonoBehaviour
                                 }
                         if (grey)
                         {
-                            ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type = Chips.Grey;
+                            ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type = 0;
                         }
                     }
                 }

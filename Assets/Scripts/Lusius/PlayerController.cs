@@ -1,31 +1,22 @@
 ﻿using UnityEngine;
-[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     #region PUBLIC
-    public Transform feet;
     public Camera cam;
     public float lookSpeed;
+    public float rotationSpeed;
     public float moveSpeed;
-    public float jumpSpeed;
     #endregion
     #region PRIVATE
     private Vector3 momentum;
-    public float airTime;
-    private float upVelocity;
     private Vector2 rotation;
-    private bool onGround;
-    private Vector3 feetBox;
-    private CharacterController characterController;
+    new private Rigidbody rigidbody;
     #endregion
     private void Awake()
     {
         momentum = Vector3.zero;
-        airTime = 0f;
-        characterController = GetComponent<CharacterController>();
         rotation = Vector2.zero;
-        onGround = false;
-        feetBox = new Vector3(0.8f, 0.5f, 0.8f);
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     private void Start()
@@ -36,44 +27,36 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(feet.position, feetBox);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         MoveHandler();
-        LookHandler();
+        // LookHandler();
     }
 
     private void MoveHandler()
     {
         Vector3 translation = Vector3.zero;
-        if (Physics.CheckBox(feet.position, feetBox, transform.rotation, LayerMask.NameToLayer("Player")))
+        Vector3 rotation = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W)) translation += transform.forward * moveSpeed;
+        if (Input.GetKey(KeyCode.S)) translation += -transform.forward * moveSpeed;
+
+        if (Input.GetKey(KeyCode.A)) rotation += -transform.up * rotationSpeed;
+        if (Input.GetKey(KeyCode.D)) rotation += transform.up * rotationSpeed;
+
+        if (Input.GetKey(KeyCode.LeftAlt))
         {
-            if (!onGround) onGround = true;
-            if (upVelocity < 0) upVelocity = 0f;
-            momentum = (Input.GetAxis("Vertical") * transform.forward + Input.GetAxis("Horizontal") * transform.right) * moveSpeed;
+
         }
         else
         {
-            if (onGround)
-            {
-                onGround = false;
-                airTime = 0f;
-            }
-            else airTime += Time.deltaTime;
-            upVelocity -= 20f * Time.deltaTime;
-            momentum += (transform.right * Input.GetAxis("Horizontal") + transform.forward * Input.GetAxis("Vertical")) * moveSpeed / ((airTime + 1f) * 20f);
-            momentum = Vector3.ClampMagnitude(momentum, moveSpeed);
+
         }
 
-        translation += momentum * Time.deltaTime;
-        translation += Vector3.up * upVelocity * Time.deltaTime;
-
-        if (Input.GetKeyDown(KeyCode.Space) && onGround) upVelocity = jumpSpeed;
-        // if (Input.GetKey(KeyCode.C)) translation += Vector3.down * Time.deltaTime * 9f;
-
-        characterController.Move(translation);
+        if (!translation.Equals(Vector3.zero)) rigidbody.AddForce(translation * Time.deltaTime);
+        if (!rotation.Equals(Vector3.zero)) rigidbody.AddTorque(rotation * Time.deltaTime);
     }
 
     private void LookHandler()

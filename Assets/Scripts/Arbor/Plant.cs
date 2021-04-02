@@ -35,7 +35,7 @@ public class Plant : MonoBehaviour, IMarch
         for (int z = 0; z < 16; z++)
             for (int y = 0; y < 16; y++)
                 for (int x = 0; x < 16; x++)
-                    marcher.chips[z * 16 * 16 + y * 16 + x] = new Chip(0, Chips.Dirt, 0);
+                    marcher.chips[z * 16 * 16 + y * 16 + x] = new Chip(0, 2, 0);
     }
 
     public void MeshUpdate() { }
