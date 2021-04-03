@@ -558,7 +558,7 @@ void Noise3D (uint3 id : SV_DispatchThreadID)
     
     chips[index] = iso(chips[index], normalToByte(isoValue));
     
-    if(iso(chips[index]) > 0x80){
+    if(iso(chips[index]) > 128){
         chips[index] = type(chips[index],  randomSolid(world * typeN, minType, maxType));   
 
     } else chips[index] = type(chips[index], emptyType);   

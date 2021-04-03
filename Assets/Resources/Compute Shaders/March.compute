@@ -554,15 +554,16 @@ static const int cornerIndexBFromEdge[12] = {
 };
 
 int size;
+uint uSize;
 RWStructuredBuffer<int> chips;
 AppendStructuredBuffer<Triangle> triangles;
 
-float3 interpolateVerts(half iso1, half iso2, float3 p1, float3 p2) {
-    return p1 + ((0x80 - iso1) / (iso2 - iso1)) * (p2 - p1);
+float3 interpolateVerts(half iso1, half iso2, uint3 p1, uint3 p2) {
+    return p1 + ((128 - iso1) / (iso2 - iso1)) * (float3((float)p2.x, (float)p2.y, (float)p2.z) - float3((float)p1.x, (float)p1.y, (float)p1.z));
 }
 
-int indexFromCoord(int x, int y, int z) {
-    return x * size * size + y * size + z;
+uint indexFromCoord(uint x, uint y, uint z) {
+    return x * uSize * uSize + y * uSize + z;
 }
 
 float3 normal(float3 a, float3 b, float3 c){
@@ -586,17 +587,18 @@ int data(int i){
 [numthreads(1,1,1)]
 void March (uint3 id : SV_DispatchThreadID)
 {
-    if(id.x >= size - 1 || id.y >= size - 1 || id.z >= size - 1) return;
+    uSize = (uint)size;
+    if(id.x >= uSize - 1 || id.y >= uSize - 1 || id.z >= uSize - 1) return;
     
-    float3 cubeCornerPositions[8] = {
-        float3(id.x, id.y, id.z),
-        float3(id.x + 1, id.y, id.z),
-        float3(id.x + 1, id.y, id.z + 1),
-        float3(id.x, id.y, id.z + 1),
-        float3(id.x, id.y + 1, id.z),
-        float3(id.x + 1, id.y + 1, id.z),
-        float3(id.x + 1, id.y + 1, id.z + 1),
-        float3(id.x, id.y + 1, id.z + 1)
+    uint3 cubeCornerPositions[8] = {
+        uint3(id.x, id.y, id.z),
+        uint3(id.x + 1, id.y, id.z),
+        uint3(id.x + 1, id.y, id.z + 1),
+        uint3(id.x, id.y, id.z + 1),
+        uint3(id.x, id.y + 1, id.z),
+        uint3(id.x + 1, id.y + 1, id.z),
+        uint3(id.x + 1, id.y + 1, id.z + 1),
+        uint3(id.x, id.y + 1, id.z + 1)
     };
 
     int cubeCorners[8] = {
@@ -611,14 +613,14 @@ void March (uint3 id : SV_DispatchThreadID)
     };
 
     int cubeIndex = 0;
-    if (iso(cubeCorners[0]) > 0x80) cubeIndex |= 1;
-    if (iso(cubeCorners[1]) > 0x80) cubeIndex |= 2;
-    if (iso(cubeCorners[2]) > 0x80) cubeIndex |= 4;
-    if (iso(cubeCorners[3]) > 0x80) cubeIndex |= 8;
-    if (iso(cubeCorners[4]) > 0x80) cubeIndex |= 16;
-    if (iso(cubeCorners[5]) > 0x80) cubeIndex |= 32;
-    if (iso(cubeCorners[6]) > 0x80) cubeIndex |= 64;
-    if (iso(cubeCorners[7]) > 0x80) cubeIndex |= 128;
+    if (iso(cubeCorners[0]) > 128) cubeIndex |= 1;
+    if (iso(cubeCorners[1]) > 128) cubeIndex |= 2;
+    if (iso(cubeCorners[2]) > 128) cubeIndex |= 4;
+    if (iso(cubeCorners[3]) > 128) cubeIndex |= 8;
+    if (iso(cubeCorners[4]) > 128) cubeIndex |= 16;
+    if (iso(cubeCorners[5]) > 128) cubeIndex |= 32;
+    if (iso(cubeCorners[6]) > 128) cubeIndex |= 64;
+    if (iso(cubeCorners[7]) > 128) cubeIndex |= 128;
 
  for (int i = 0; triangulation[cubeIndex][i] != -1; i +=3) {
         int a0 = cornerIndexAFromEdge[triangulation[cubeIndex][i]];

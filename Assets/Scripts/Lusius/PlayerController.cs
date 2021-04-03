@@ -9,13 +9,13 @@ public class PlayerController : MonoBehaviour
     #endregion
     #region PRIVATE
     private Vector3 momentum;
-    private Vector2 rotation;
+    private Vector3 camRotation;
     new private Rigidbody rigidbody;
     #endregion
     private void Awake()
     {
         momentum = Vector3.zero;
-        rotation = Vector2.zero;
+        camRotation = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
     }
 
@@ -29,10 +29,21 @@ public class PlayerController : MonoBehaviour
     {
     }
 
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftAlt))
+        {
+            camRotation.y = Mathf.Clamp(camRotation.y + Input.GetAxis("Mouse X"), -90f, 90f);
+            camRotation.x = Mathf.Clamp(camRotation.x - Input.GetAxis("Mouse Y"), -90f, 90f);
+        }
+        else
+            camRotation *= .75f;
+        cam.transform.localEulerAngles = camRotation;
+    }
+
     private void FixedUpdate()
     {
         MoveHandler();
-        // LookHandler();
     }
 
     private void MoveHandler()
@@ -43,28 +54,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W)) translation += transform.forward * moveSpeed;
         if (Input.GetKey(KeyCode.S)) translation += -transform.forward * moveSpeed;
 
-        if (Input.GetKey(KeyCode.A)) rotation += -transform.up * rotationSpeed;
-        if (Input.GetKey(KeyCode.D)) rotation += transform.up * rotationSpeed;
+        if (Input.GetKey(KeyCode.A)) rotation += transform.forward * rotationSpeed;
+        if (Input.GetKey(KeyCode.D)) rotation += -transform.forward * rotationSpeed;
 
-        if (Input.GetKey(KeyCode.LeftAlt))
+
+        if (!Input.GetKey(KeyCode.LeftAlt))
         {
-
-        }
-        else
-        {
-
+            rotation += transform.up * Input.GetAxis("Mouse X") * lookSpeed * .4f;
+            rotation += -transform.right * Input.GetAxis("Mouse Y") * lookSpeed;
         }
 
         if (!translation.Equals(Vector3.zero)) rigidbody.AddForce(translation * Time.deltaTime);
         if (!rotation.Equals(Vector3.zero)) rigidbody.AddTorque(rotation * Time.deltaTime);
-    }
-
-    private void LookHandler()
-    {
-        rotation.y += Input.GetAxis("Mouse X");
-        rotation.x += -Input.GetAxis("Mouse Y");
-        cam.transform.eulerAngles = (Vector2)rotation * lookSpeed * new Vector2(1, 1);
-        transform.eulerAngles = (Vector2)rotation * lookSpeed * new Vector2(0, 1);
     }
 
 

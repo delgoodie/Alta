@@ -299,8 +299,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 8518179932573962744}
-  lookSpeed: 3
-  moveSpeed: 5
+  lookSpeed: 10
+  rotationSpeed: 10
+  moveSpeed: 140
 --- !u!1 &5648748656384072893
 GameObject:
   m_ObjectHideFlags: 0
