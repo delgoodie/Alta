@@ -54,7 +54,7 @@ public class Chunk : MonoBehaviour, IMarch
         marcher.Init(false);
     }
 
-    public void Chipnit() => marcher.chips = ChunkManager.Instance.Chipnit(position);
+    public void Chipnit() => ChunkManager.Instance.RequestChipnit(this);
 
     public Vector3 center() => transform.position + new Vector3((ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f);
 

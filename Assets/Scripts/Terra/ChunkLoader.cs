@@ -6,6 +6,7 @@ public static class ChunkLoader
 {
     public static void SaveChunk(Chunk chunk)
     {
+        return;
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/c" + chunk.position.x + "_" + chunk.position.y + "_" + chunk.position.z + ".chnk";
         FileStream stream = new FileStream(path, FileMode.Create);
@@ -23,7 +24,7 @@ public static class ChunkLoader
         return data;
     }
 
-    public static bool ChunkExists(Vector3Int pos) => File.Exists(Application.persistentDataPath + "/c" + pos.x + "_" + pos.y + "_" + pos.z + ".chnk");
+    public static bool ChunkExists(Vector3Int pos) => false; //File.Exists(Application.persistentDataPath + "/c" + pos.x + "_" + pos.y + "_" + pos.z + ".chnk");
 
     public static void DeleteChunk(Vector3Int pos) => File.Delete(Application.persistentDataPath + "/c" + pos.x + "_" + pos.y + "_" + pos.z + ".chnk");
 

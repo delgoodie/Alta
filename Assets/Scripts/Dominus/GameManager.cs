@@ -22,6 +22,11 @@ class GameManager : MonoBehaviour
     private int count4;
     private int count5;
     private int count6;
+    private Vector3Int previousPlayerChunk;
+    [SerializeField]
+    private Transform UnderwaterVolume;
+    [SerializeField]
+    private Transform SurfaceBottom;
 
     private void Awake()
     {
@@ -39,16 +44,36 @@ class GameManager : MonoBehaviour
         count4 = 0;
         count5 = 0;
         count6 = 0;
+        previousPlayerChunk = Vector3Int.zero;
     }
 
     private void Start()
     {
-        ChunkManager.Instance.ComputeChunkUpdate(Vector3Int.zero);
+        ChunkManager.Instance.ChunkUpdate(Vector3Int.zero);
     }
     private void Update()
     {
         TickHandler();
-        if (!PlayerManager.Instance.activePlayer && MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
+        if (PlayerManager.Instance.activePlayer)
+        {
+            Vector3 playerPosition = PlayerManager.Instance.PlayerPosition();
+            Vector3Int playerChunk = new Vector3Int((int)(playerPosition.x * 0.0625f), (int)(playerPosition.y * 0.0625f), (int)(playerPosition.z * 0.0625f));
+            if (tick6)
+            {
+                SurfaceBottom.position = new Vector3(playerPosition.x, SurfaceBottom.position.y, playerPosition.z);
+                SurfaceBottom.position = playerPosition;
+            }
+            if (!previousPlayerChunk.Equals(playerChunk))
+            {
+                ChunkManager.Instance.ChunkUpdate(playerChunk);
+                previousPlayerChunk = playerChunk;
+            }
+        }
+        else
+        {
+            if (MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
+        }
+
     }
 
     private void TickHandler()

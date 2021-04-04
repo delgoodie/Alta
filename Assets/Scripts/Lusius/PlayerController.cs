@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W)) translation += transform.forward * moveSpeed;
         if (Input.GetKey(KeyCode.S)) translation += -transform.forward * moveSpeed;
 
+        if (Input.GetKey(KeyCode.LeftShift)) translation *= 5f;
+
         if (Input.GetKey(KeyCode.A)) rotation += transform.forward * rotationSpeed;
         if (Input.GetKey(KeyCode.D)) rotation += -transform.forward * rotationSpeed;
 

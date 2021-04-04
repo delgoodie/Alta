@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clearColorMode: 1
-  backgroundColorHDR: {r: 1, g: 1, b: 1, a: 0}
+  backgroundColorHDR: {r: 0, g: 0.14117648, b: 1.6627451, a: 0}
   clearDepth: 1
   volumeLayerMask:
     serializedVersion: 2
@@ -299,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 8518179932573962744}
-  lookSpeed: 10
+  lookSpeed: 20
   rotationSpeed: 10
   moveSpeed: 140
 --- !u!1 &5648748656384072893

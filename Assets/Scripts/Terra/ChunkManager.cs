@@ -22,6 +22,7 @@ public class ChunkManager : MonoBehaviour
     #region PRIVATE
     private Dictionary<Vector3Int, Chunk> ChunkList;
     private Queue<Chunk> RecycledChunkList;
+    private Queue<Chunk> ChipnitQueue;
     private GameObject ChunkObject;
     private List<Vector3Int> UpdateList;
     private ComputeShader NoiseShader;
@@ -36,6 +37,7 @@ public class ChunkManager : MonoBehaviour
         UpdateList = new List<Vector3Int>();
         ChunkList = new Dictionary<Vector3Int, Chunk>();
         RecycledChunkList = new Queue<Chunk>();
+        ChipnitQueue = new Queue<Chunk>();
         mChips = new int[Size * Size * Size];
         for (int i = 0; i < mChips.Length; i++) mChips[i] = 0;
         ChunkObject = Resources.Load("Prefabs/ChunkObject") as GameObject;
@@ -43,51 +45,100 @@ public class ChunkManager : MonoBehaviour
         NoiseKernel = NoiseShader.FindKernel("Noise3D");
     }
 
-
     private void Update()
     {
-        if (RunChunkUpdate)
+        // ! Update All Chunks
+        // if (RunChunkUpdate)
+        // {
+        //     RunChunkUpdate = false;
+        //     foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
+        //     {
+        //         chunkEntry.Value.marcher.chips = Chipnit(chunkEntry.Key);
+        //         chunkEntry.Value.marcher.March();
+        //     }
+        // }
+
+        if (ChipnitQueue.Count > 0)
         {
-            RunChunkUpdate = false;
-            foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
-            {
-                chunkEntry.Value.marcher.chips = Chipnit(chunkEntry.Key);
-                chunkEntry.Value.marcher.March();
-            }
+            noMarch = false;
+            Chipnit(ChipnitQueue.Dequeue());
         }
+        else noMarch = true;
 
     }
 
-    public void ComputeChunkUpdate(Vector3 pos)
+    public void ChunkUpdate(Vector3Int position)
     {
-        Vector3Int p = new Vector3Int((int)pos.x / 16, (int)pos.y / 16, (int)pos.z / 16);
         UpdateList.Clear();
 
-        for (int y = p.y - 1; y < p.y + 2; y++)
+        for (int y = position.y - RenderDistance / 2 - 1; y < position.y + RenderDistance / 2; y++)
         {
-            for (int x = p.x - RenderDistance; x <= p.x + RenderDistance; x++)
-                UpdateList.Add(new Vector3Int(x, y, p.z));
+            for (int x = position.x - RenderDistance; x <= position.x + RenderDistance; x++)
+                UpdateList.Add(new Vector3Int(x, y, position.z));
 
             for (int i = RenderDistance; i > 0; i--)
-                for (int x = p.x - (i - 1); x <= p.x + (i - 1); x++)
+                for (int x = position.x - (i - 1); x <= position.x + (i - 1); x++)
                 {
-                    UpdateList.Add(new Vector3Int(x, y, p.z + (RenderDistance - i + 1)));
-                    UpdateList.Add(new Vector3Int(x, y, p.z - (RenderDistance - i + 1)));
+                    UpdateList.Add(new Vector3Int(x, y, position.z + (RenderDistance - i + 1)));
+                    UpdateList.Add(new Vector3Int(x, y, position.z - (RenderDistance - i + 1)));
                 }
         }
 
-        CleanChunks(pos);
-        ChunkUpdate();
-    }
 
-    public void CleanChunks(Vector3 pos)
-    {
+        // QUEUE FAR AWAY CHUNKS FOR RECYCLING
         foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkList)
-            if (Mathf.Abs((pos - pair.Value.transform.position).magnitude) > (RenderDistance + 1) * (Size - 1))
+            if (Mathf.Abs((position - pair.Value.position).sqrMagnitude) > RenderDistance * RenderDistance)
+            {
+                pair.Value.gameObject.SetActive(false);
                 RecycledChunkList.Enqueue(pair.Value);
+            }
+        foreach (Chunk chunk in RecycledChunkList)
+        {
+            if (!chunk.position.Equals(Vector3Int.zero))
+            {
+                ChunkList.Remove(chunk.position);
+                chunk.position = Vector3Int.zero;
+            }
+        }
+
+        // ADD / DEQUEUE NEW CHUNKS FROM UPDATE LIST
+        for (int i = 0; i < UpdateList.Count; i++)
+        {
+            if (!ChunkList.ContainsKey(UpdateList[i]))
+            {
+                Vector3 newPos = UpdateList[i] * (Size - 1);
+                if (UpdateList[i].x < 0) newPos.x -= 0f;
+                if (UpdateList[i].y < 0) newPos.y -= 0f;
+                if (UpdateList[i].z < 0) newPos.z -= 0f;
+                if (RecycledChunkList.Count > 0)
+                {
+                    ChunkList.Add(UpdateList[i], RecycledChunkList.Dequeue());
+                    // TODO: Chunk Saving and Loading
+                    // ChunkLoader.SaveChunk(ChunkList[UpdateList[i]]);
+                    ChunkList[UpdateList[i]].transform.position = newPos;
+                    ChunkList[UpdateList[i]].gameObject.SetActive(true);
+                }
+                else
+                {
+                    GameObject chunkObject = Instantiate(ChunkObject, newPos, Quaternion.identity, transform);
+                    ChunkList.Add(UpdateList[i], chunkObject.GetComponent<Chunk>());
+                }
+                // TODO: Chunk Saving and Loading
+                if (ChunkLoader.ChunkExists(UpdateList[i]))
+                    ChunkList[UpdateList[i]].Init(ChunkLoader.LoadChunk(UpdateList[i]));
+                else
+                    ChunkList[UpdateList[i]].Init(UpdateList[i]);
+            }
+        }
+        UpdateList.Clear();
     }
 
-    public Chip[] Chipnit(Vector3Int p)
+    public void RequestChipnit(Chunk c)
+    {
+        if (!ChipnitQueue.Contains(c)) ChipnitQueue.Enqueue(c);
+    }
+
+    private void Chipnit(Chunk chunk)
     {
         ChipsBuffer = new ComputeBuffer(Size * Size * Size, sizeof(int));
 
@@ -100,9 +151,9 @@ public class ChunkManager : MonoBehaviour
         NoiseShader.SetBuffer(NoiseKernel, "octaves", OctaveBuffer);
 
         NoiseShader.SetInt("size", Size);
-        NoiseShader.SetInt("X", p.x);
-        NoiseShader.SetInt("Y", p.y);
-        NoiseShader.SetInt("Z", p.z);
+        NoiseShader.SetInt("X", chunk.position.x);
+        NoiseShader.SetInt("Y", chunk.position.y);
+        NoiseShader.SetInt("Z", chunk.position.z);
 
         NoiseShader.SetInt("offX", Offset.x);
         NoiseShader.SetInt("offY", Offset.y);
@@ -129,13 +180,7 @@ public class ChunkManager : MonoBehaviour
             chips[i].type = (byte)((mChips[i] >> 16) & 0xff);
             chips[i].data = (ushort)(mChips[i] & 0xffff);
         }
-        return chips;
-    }
-
-    public void ChunkUpdate()
-    {
-        for (int i = 0; i < UpdateList.Count; i++) { if (!ChunkList.ContainsKey(UpdateList[i])) { if (RecycledChunkList.Count > 0) { ChunkList.Add(UpdateList[i], RecycledChunkList.Dequeue()); ChunkLoader.SaveChunk(ChunkList[UpdateList[i]]); ChunkList[UpdateList[i]].transform.position = UpdateList[i] * Size; } else { GameObject chunkObject = Instantiate(ChunkObject, UpdateList[i] * (Size - 1), Quaternion.identity, transform); ChunkList.Add(UpdateList[i], chunkObject.GetComponent<Chunk>()); } if (ChunkLoader.ChunkExists(UpdateList[i])) ChunkList[UpdateList[i]].Init(ChunkLoader.LoadChunk(UpdateList[i])); else ChunkList[UpdateList[i]].Init(UpdateList[i]); } }
-        UpdateList.Clear();
+        chunk.marcher.chips = chips;
     }
 
     public Chip WorldToChip(Vector3 world)
