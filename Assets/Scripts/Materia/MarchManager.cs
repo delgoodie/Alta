@@ -17,6 +17,7 @@ public class MarchManager : MonoBehaviour
     private Vector3[] normals;
     private Color[] colors;
     private int[] triangles;
+    private Vector2[] uv;
     private int[] triCount;
     private int[] mChips;
 
@@ -78,7 +79,7 @@ public class MarchManager : MonoBehaviour
         chipsBuffer = new ComputeBuffer(mChips.Length, 1 * sizeof(int));
         triCountBuffer = new ComputeBuffer(1, sizeof(int), ComputeBufferType.Raw);
         triCount = new int[1] { 0 };
-        triangleBuffer = new ComputeBuffer(maxTriangleCount, sizeof(float) * 3 * 3 + sizeof(float) * 3 + sizeof(int), ComputeBufferType.Append);
+        triangleBuffer = new ComputeBuffer(maxTriangleCount, sizeof(float) * 3 * 3 + sizeof(float) * 2 * 3 + sizeof(float) * 3 + sizeof(int), ComputeBufferType.Append);
 
         triangleBuffer.SetCounterValue(0);
         Shader.SetBuffer(Kernel, "triangles", triangleBuffer);
@@ -110,6 +111,7 @@ public class MarchManager : MonoBehaviour
         normals = new Vector3[triCount[0] * 3];
         colors = new Color[triCount[0] * 3];
         triangles = new int[triCount[0] * 3];
+        uv = new Vector2[triCount[0] * 3];
 
         for (int t = 0, i = 0; t < computeTriangles.Length; t++)
         {
@@ -117,14 +119,17 @@ public class MarchManager : MonoBehaviour
             normals[i] = computeTriangles[t].normal;
             colors[i] = Chips.Colors[computeTriangles[t].type];
             triangles[i] = i;
+            uv[i] = computeTriangles[t].uvA;
             verticies[i + 1] = computeTriangles[t].vertexB * m.scale + m.offset;
             normals[i + 1] = computeTriangles[t].normal;
             colors[i + 1] = Chips.Colors[computeTriangles[t].type];
             triangles[i + 1] = i + 1;
+            uv[i + 1] = computeTriangles[t].uvB;
             verticies[i + 2] = computeTriangles[t].vertexC * m.scale + m.offset;
             normals[i + 2] = computeTriangles[t].normal;
             colors[i + 2] = Chips.Colors[computeTriangles[t].type];
             triangles[i + 2] = i + 2;
+            uv[i + 2] = computeTriangles[t].uvC;
             i += 3;
         }
         #endregion
@@ -136,6 +141,8 @@ public class MarchManager : MonoBehaviour
             m.mesh.triangles = triangles;
             m.mesh.colors = colors;
             m.mesh.normals = normals;
+            m.mesh.uv = uv;
+            // TODO: Manually calculate bounds in Shader
             m.mesh.RecalculateBounds();
             m.mesh.MarkModified();
             if (triangles.Length > 10 * 3) m.meshCollider.sharedMesh = m.mesh;
@@ -178,6 +185,9 @@ struct Triangle
     public Vector3 vertexA;
     public Vector3 vertexB;
     public Vector3 vertexC;
+    public Vector2 uvA;
+    public Vector2 uvB;
+    public Vector2 uvC;
     public Vector3 normal;
     public int type;
 }

@@ -17,9 +17,9 @@ public class Chunk : MonoBehaviour, IMarch
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(center, new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
-        Gizmos.DrawSphere(center, .5f);
+        // Gizmos.color = Color.red;
+        // Gizmos.DrawWireCube(center, new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
+        // Gizmos.DrawSphere(center, .5f);
         for (int i = 0; i < sites.Count; i++)
             Gizmos.DrawRay(sites[i]);
     }

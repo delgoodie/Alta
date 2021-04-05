@@ -4,6 +4,9 @@ struct Triangle {
     float3 vertexA;
     float3 vertexB;
     float3 vertexC;
+    float2 uvA;
+    float2 uvB;
+    float2 uvC;
     float3 normal;
     int type;
 };
@@ -636,7 +639,9 @@ void March (uint3 id : SV_DispatchThreadID)
         tri.vertexA = interpolateVerts(iso(cubeCorners[a0]), iso(cubeCorners[b0]), cubeCornerPositions[a0], cubeCornerPositions[b0]);
         tri.vertexB = interpolateVerts(iso(cubeCorners[a1]), iso(cubeCorners[b1]), cubeCornerPositions[a1], cubeCornerPositions[b1]);
         tri.vertexC = interpolateVerts(iso(cubeCorners[a2]), iso(cubeCorners[b2]), cubeCornerPositions[a2], cubeCornerPositions[b2]);
-        
+        tri.uvA = float2(0, 0);
+        tri.uvB = float2(1, 0);
+        tri.uvC = float2(0, 1);
         tri.normal = normal(tri.vertexA, tri.vertexB, tri.vertexC);
 
         int highestIso = a0;
