@@ -33,7 +33,7 @@ public class Marcher : MonoBehaviour
     {
         if (updated)
         {
-            MainScript.MeshUpdate();
+            MainScript.MarchUpdate();
             updated = false;
         }
     }
@@ -53,16 +53,14 @@ public class Marcher : MonoBehaviour
         }
     }
 
-    public void Init(bool chipnit)
+    public void Init()
     {
         updated = false;
-        if (chipnit) MainScript.Chipnit();
         March();
     }
 
     public void March()
     {
-        MainScript.Markup();
         MarchManager.Instance.RequestMarch(this);
     }
 

@@ -71,6 +71,7 @@ public class ChunkManager : MonoBehaviour
     {
         UpdateList.Clear();
 
+        // FIND CHUNKS AROUND POSITION FROM RENDER DISTANCE
         for (int y = position.y - RenderDistance / 2 - 1; y < position.y + RenderDistance / 2; y++)
         {
             for (int x = position.x - RenderDistance; x <= position.x + RenderDistance; x++)
@@ -87,17 +88,17 @@ public class ChunkManager : MonoBehaviour
 
         // QUEUE FAR AWAY CHUNKS FOR RECYCLING
         foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkList)
-            if (Mathf.Abs((position - pair.Value.position).sqrMagnitude) > RenderDistance * RenderDistance)
-            {
-                pair.Value.gameObject.SetActive(false);
+            if (Mathf.Abs((position - pair.Value.position).sqrMagnitude) > (RenderDistance + 1) * (RenderDistance + 1))
                 RecycledChunkList.Enqueue(pair.Value);
-            }
+
         foreach (Chunk chunk in RecycledChunkList)
         {
-            if (!chunk.position.Equals(Vector3Int.zero))
+            if (chunk.gameObject.activeSelf)
             {
+                chunk.gameObject.SetActive(false);
                 ChunkList.Remove(chunk.position);
                 chunk.position = Vector3Int.zero;
+                chunk.transform.position = Vector3.zero;
             }
         }
 
@@ -181,6 +182,7 @@ public class ChunkManager : MonoBehaviour
             chips[i].data = (ushort)(mChips[i] & 0xffff);
         }
         chunk.marcher.chips = chips;
+        chunk.ChipUpdate();
     }
 
     public Chip WorldToChip(Vector3 world)
@@ -210,7 +212,7 @@ public class ChunkManager : MonoBehaviour
     {
         foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
         {
-            if ((chunkEntry.Value.center() - p).sqrMagnitude < 24f * 24f + r * r)
+            if ((chunkEntry.Value.center - p).sqrMagnitude < 24f * 24f + r * r)
                 chunkEntry.Value.marcher.Add(p, r, power);
         }
     }
@@ -219,7 +221,7 @@ public class ChunkManager : MonoBehaviour
     {
         foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
         {
-            if ((chunkEntry.Value.center() - p).sqrMagnitude < 24f * 24f + r * r)
+            if ((chunkEntry.Value.center - p).sqrMagnitude < 24f * 24f + r * r)
                 chunkEntry.Value.marcher.Subtract(p, r, power);
         }
     }

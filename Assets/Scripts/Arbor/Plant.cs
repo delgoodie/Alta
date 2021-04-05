@@ -38,7 +38,7 @@ public class Plant : MonoBehaviour, IMarch
                     marcher.chips[z * 16 * 16 + y * 16 + x] = new Chip(0, 2, 0);
     }
 
-    public void MeshUpdate() { }
+    public void MarchUpdate() { }
 
     void OnDrawGizmosSelected()
     {

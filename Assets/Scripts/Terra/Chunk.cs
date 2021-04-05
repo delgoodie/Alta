@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Marcher))]
 public class Chunk : MonoBehaviour, IMarch
@@ -7,15 +8,28 @@ public class Chunk : MonoBehaviour, IMarch
     public Marcher marcher;
     public Vector3Int position;
     public GameObject[] plants;
+    public Vector3 center;
     private ComputeShader MarkupShader;
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
-    void OnDrawGizmosSelected()
+    private Mesh mesh;
+    private List<Ray> sites;
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(center, new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
+        Gizmos.DrawSphere(center, .5f);
+        for (int i = 0; i < sites.Count; i++)
+            Gizmos.DrawRay(sites[i]);
+    }
+
+    private void OnDrawGizmosSelected()
     {
         if (MarchManager.Instance.gizmosEnabled)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(center(), new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
+            Gizmos.DrawWireCube(center, new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
             Gizmos.color = Color.blue;
 
             for (int i = 0; i < marcher.chips.Length; i++)
@@ -32,6 +46,8 @@ public class Chunk : MonoBehaviour, IMarch
     private void Awake()
     {
         marcher = GetComponent<Marcher>();
+        mesh = GetComponent<MeshFilter>().mesh;
+        sites = new List<Ray>();
         MarkupShader = Resources.Load("Compute Shaders/ChipMarkup") as ComputeShader;
         MarkupKernel = MarkupShader.FindKernel("ChipMarkup");
     }
@@ -40,51 +56,43 @@ public class Chunk : MonoBehaviour, IMarch
     {
     }
 
+    private Ray RandomSurfaceRay()
+    {
+        int tri = Random.Range(0, mesh.triangles.Length / 3);
+        Vector3 a = mesh.vertices[mesh.triangles[tri * 3]], b = mesh.vertices[mesh.triangles[tri * 3 + 1]], c = mesh.vertices[mesh.triangles[tri * 3 + 2]];
+        return new Ray(transform.position + Vector3.Lerp(a, Vector3.Lerp(b, c, Random.Range(0.0f, 1.0f)), Random.Range(0.0f, 1.0f)), Vector3.Cross(a - b, a - c));
+    }
+
     public void Init(Vector3Int _position)
     {
+        sites.Clear();
         position = _position;
-        marcher.Init(true);
+        center = transform.position + new Vector3((ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f);
+        Chipnit();
     }
 
     public void Init(ChunkData data)
     {
         position = new Vector3Int(data.position[0], data.position[1], data.position[2]);
+        center = transform.position + new Vector3((ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f);
         marcher.chips = data.chips;
         marcher.size = data.size;
-        marcher.Init(false);
+        Chipnit();
+        Mesh g = new Mesh();
+    }
+
+    public void ChipUpdate()
+    {
+        marcher.Init();
     }
 
     public void Chipnit() => ChunkManager.Instance.RequestChipnit(this);
 
-    public Vector3 center() => transform.position + new Vector3((ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f);
-
-    public void Markup()
+    public void MarchUpdate()
     {
-        return;
-        //ChunkManager.Instance.Markup(position);
-        //return;
-        chipsBuffer = new ComputeBuffer(marcher.chips.Length, sizeof(int));
-
-        int[] mChips = new int[marcher.chips.Length];
-        for (int i = 0; i < marcher.chips.Length; i++) mChips[i] = marcher.chips[i].iso << 24 | marcher.chips[i].type << 16 | marcher.chips[i].data;
-        chipsBuffer.SetData(mChips);
-        MarkupShader.SetBuffer(MarkupKernel, "chips", chipsBuffer);
-
-        MarkupShader.SetInt("size", ChunkManager.Instance.Size);
-        MarkupShader.SetInt("chipsLength", marcher.chips.Length);
-
-        MarkupShader.Dispatch(MarkupKernel, ChunkManager.Instance.Size, ChunkManager.Instance.Size, ChunkManager.Instance.Size);
-
-        chipsBuffer.GetData(mChips);
-        chipsBuffer.Dispose();
-
-        for (int i = 0; i < mChips.Length; i++)
+        for (int i = 0; i < 20; i++)
         {
-            marcher.chips[i].iso = (byte)((mChips[i] >> 24) & 0xff);
-            marcher.chips[i].type = (byte)((mChips[i] >> 16) & 0xff);
-            marcher.chips[i].data = (ushort)(mChips[i] & 0xffff);
+            sites.Add(RandomSurfaceRay());
         }
     }
-
-    public void MeshUpdate() { }
 }
