@@ -12,16 +12,14 @@ public class Chunk : MonoBehaviour, IMarch
     private ComputeShader MarkupShader;
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
+    private GameObject kelpPrefab;
     private Mesh mesh;
-    private List<Ray> sites;
 
     private void OnDrawGizmos()
     {
         // Gizmos.color = Color.red;
         // Gizmos.DrawWireCube(center, new Vector3(ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1, ChunkManager.Instance.Size - 1));
         // Gizmos.DrawSphere(center, .5f);
-        for (int i = 0; i < sites.Count; i++)
-            Gizmos.DrawRay(sites[i]);
     }
 
     private void OnDrawGizmosSelected()
@@ -47,9 +45,9 @@ public class Chunk : MonoBehaviour, IMarch
     {
         marcher = GetComponent<Marcher>();
         mesh = GetComponent<MeshFilter>().mesh;
-        sites = new List<Ray>();
         MarkupShader = Resources.Load("Compute Shaders/ChipMarkup") as ComputeShader;
         MarkupKernel = MarkupShader.FindKernel("ChipMarkup");
+        kelpPrefab = Resources.Load("Prefabs/Kelp") as GameObject;
     }
 
     private void Start()
@@ -65,7 +63,6 @@ public class Chunk : MonoBehaviour, IMarch
 
     public void Init(Vector3Int _position)
     {
-        sites.Clear();
         position = _position;
         center = transform.position + new Vector3((ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f, (ChunkManager.Instance.Size - 1) * .5f);
         Chipnit();
@@ -90,9 +87,11 @@ public class Chunk : MonoBehaviour, IMarch
 
     public void MarchUpdate()
     {
+        while (transform.childCount > 0) Destroy(transform.GetChild(0));
         for (int i = 0; i < 20; i++)
         {
-            sites.Add(RandomSurfaceRay());
+            Ray site = RandomSurfaceRay();
+            Instantiate(kelpPrefab, site.origin, Quaternion.LookRotation(Vector3.Cross(Vector3.one, site.direction), site.direction), transform);
         }
     }
 }

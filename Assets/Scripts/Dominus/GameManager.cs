@@ -58,16 +58,13 @@ class GameManager : MonoBehaviour
         {
             Vector3 playerPosition = PlayerManager.Instance.PlayerPosition();
             Vector3Int playerChunk = new Vector3Int((int)(playerPosition.x * 0.0625f), (int)(playerPosition.y * 0.0625f), (int)(playerPosition.z * 0.0625f));
-            if (tick6)
-            {
-                SurfaceBottom.position = new Vector3(playerPosition.x, SurfaceBottom.position.y, playerPosition.z);
-                SurfaceBottom.position = playerPosition;
-            }
             if (!previousPlayerChunk.Equals(playerChunk))
             {
                 ChunkManager.Instance.ChunkUpdate(playerChunk);
                 previousPlayerChunk = playerChunk;
             }
+            SurfaceBottom.position = new Vector3(playerPosition.x, SurfaceBottom.position.y, playerPosition.z);
+            UnderwaterVolume.position = playerPosition;
         }
         else
         {
