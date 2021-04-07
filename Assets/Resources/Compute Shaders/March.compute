@@ -561,21 +561,29 @@ uint uSize;
 RWStructuredBuffer<int> chips;
 AppendStructuredBuffer<Triangle> triangles;
 
+//  VECTOR FUNCTIONS
+float mag(float3 v){
+    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+float invmag(float3 v){
+    return 1 / sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+
+}
+float3 cross(float3 a, float3 b){
+    return float3(
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.z
+        );
+}
+float3 normalize(float3 v){
+    return v * invmag(v);
+}
 float3 interpolateVerts(half iso1, half iso2, uint3 p1, uint3 p2) {
     return p1 + ((128 - iso1) / (iso2 - iso1)) * (float3((float)p2.x, (float)p2.y, (float)p2.z) - float3((float)p1.x, (float)p1.y, (float)p1.z));
 }
 
-uint indexFromCoord(uint x, uint y, uint z) {
-    return x * uSize * uSize + y * uSize + z;
-}
-
-float3 normal(float3 a, float3 b, float3 c){
-    float3 v = b - a;
-    float3 w = c - a;
-    float3 un = float3(v.y * w.z - v.z * w.y, v.z * w.x - v.x * w.z, v.x * w.y - v.y * w.x);
-    return float3(un.x / (un.x * un.x + un.y * un.y + un.z * un.z), un.y / (un.x * un.x + un.y * un.y + un.z * un.z), un.z / (un.x * un.x + un.y * un.y + un.z * un.z));
-}
-
+//  CHIP FUNCTIONS
 int iso(int i){
     return (i & 0xff000000) >> 24;
 }
@@ -585,7 +593,13 @@ int type(int i){
 int data(int i){
     return i & 0x0000ffff;
 }
+uint indexFromCoord(uint x, uint y, uint z) {
+    return x * uSize * uSize + y * uSize + z;
+}
 
+float dot(float3 a, float3 b){
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
 
 [numthreads(1,1,1)]
 void March (uint3 id : SV_DispatchThreadID)
@@ -639,10 +653,20 @@ void March (uint3 id : SV_DispatchThreadID)
         tri.vertexA = interpolateVerts(iso(cubeCorners[a0]), iso(cubeCorners[b0]), cubeCornerPositions[a0], cubeCornerPositions[b0]);
         tri.vertexB = interpolateVerts(iso(cubeCorners[a1]), iso(cubeCorners[b1]), cubeCornerPositions[a1], cubeCornerPositions[b1]);
         tri.vertexC = interpolateVerts(iso(cubeCorners[a2]), iso(cubeCorners[b2]), cubeCornerPositions[a2], cubeCornerPositions[b2]);
+        
+        float3 ab = tri.vertexB - tri.vertexA, ac = tri.vertexC - tri.vertexA;
+        float iabm = invmag(ab);
+        tri.normal = normalize(cross(ab, ac)); 
+
+        float3 Y = cross(ab, tri.normal);
+
+        float scale = 1;
+        
         tri.uvA = float2(0, 0);
-        tri.uvB = float2(1, 0);
-        tri.uvC = float2(0, 1);
-        tri.normal = normal(tri.vertexA, tri.vertexB, tri.vertexC);
+        tri.uvB = float2(1 / iabm * scale, 0);
+        // TODO: FIX uvC y coordinate from crude avg
+        tri.uvC = float2(dot(ab, ac) * iabm * scale, pow(mag(ac) + mag(tri.vertexC - tri.vertexB), 2) * .175  * scale); //  dot(Y, -ac) * invmag(Y)
+
 
         int highestIso = a0;
         if(iso(cubeCorners[highestIso]) < iso(cubeCorners[b0])) highestIso = b0;
@@ -650,6 +674,7 @@ void March (uint3 id : SV_DispatchThreadID)
         if(iso(cubeCorners[highestIso]) < iso(cubeCorners[b1])) highestIso = b1;
         if(iso(cubeCorners[highestIso]) < iso(cubeCorners[a2])) highestIso = a2;
         if(iso(cubeCorners[highestIso]) < iso(cubeCorners[b2])) highestIso = b2;
+
 
         tri.type = type(cubeCorners[highestIso]);
         triangles.Append(tri);

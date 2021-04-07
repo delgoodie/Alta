@@ -37,11 +37,17 @@ public class MC_UVs : MonoBehaviour, IMarch
         if (c101) Gizmos.DrawSphere(new Vector3(1f, 0f, 1f) + transform.position, .1f);
         if (c011) Gizmos.DrawSphere(new Vector3(0f, 1f, 1f) + transform.position, .1f);
         if (c111) Gizmos.DrawSphere(new Vector3(1f, 1f, 1f) + transform.position, .1f);
-    }
 
-    /*
-    how long is recovery and do i need urinary cathader after surgery, if so for how long
-    */
+        Gizmos.color = Color.red;
+        for (int i = 0; i < marcher.mesh.triangles.Length / 3; i++)
+            Gizmos.DrawSphere(transform.position + marcher.mesh.vertices[marcher.mesh.triangles[i]], .05f);
+        Gizmos.color = Color.green;
+        for (int i = 1; i < marcher.mesh.triangles.Length / 3 + 1; i++)
+            Gizmos.DrawSphere(transform.position + marcher.mesh.vertices[marcher.mesh.triangles[i]], .05f);
+        Gizmos.color = Color.blue;
+        for (int i = 2; i < marcher.mesh.triangles.Length / 3 + 2; i++)
+            Gizmos.DrawSphere(transform.position + marcher.mesh.vertices[marcher.mesh.triangles[i]], .05f);
+    }
 
     public void Chipnit()
     {

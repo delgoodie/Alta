@@ -113,7 +113,7 @@ public class MarchManager : MonoBehaviour
         triangles = new int[triCount[0] * 3];
         uv = new Vector2[triCount[0] * 3];
 
-        for (int t = 0, i = 0; t < computeTriangles.Length; t++)
+        for (int t = 0, i = 0; t < computeTriangles.Length; t++, i += 3)
         {
             verticies[i] = computeTriangles[t].vertexA * m.scale + m.offset;
             normals[i] = computeTriangles[t].normal;
@@ -130,7 +130,6 @@ public class MarchManager : MonoBehaviour
             colors[i + 2] = Chips.Colors[computeTriangles[t].type];
             triangles[i + 2] = i + 2;
             uv[i + 2] = computeTriangles[t].uvC;
-            i += 3;
         }
         #endregion
 
@@ -146,8 +145,9 @@ public class MarchManager : MonoBehaviour
             m.mesh.RecalculateBounds();
             m.mesh.MarkModified();
             if (triangles.Length > 10 * 3) m.meshCollider.sharedMesh = m.mesh;
+
+            m.updated = true;
         }
-        m.updated = true;
     }
 
     /*
