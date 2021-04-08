@@ -9,9 +9,10 @@ public class MarchManager : MonoBehaviour
     public static MarchManager Instance;
     public bool gizmosEnabled;
     private Queue<Marcher> MarchQueue;
-    private ComputeShader Shader;
+    private ComputeShader Shader, CombineShader;
     private int Kernel;
-    private ComputeBuffer triangleBuffer, chipsBuffer, triCountBuffer;
+    private int CombineKernel;
+    private ComputeBuffer triangleBuffer, chipsBuffer, triCountBuffer, cTriBuffer, cVertBuffer;
     private const int maxTriangleCount = 21845;
     private Vector3[] verticies;
     private Vector3[] normals;
@@ -28,6 +29,8 @@ public class MarchManager : MonoBehaviour
         MarchQueue = new Queue<Marcher>();
         Shader = Resources.Load("Compute Shaders/March") as ComputeShader;
         Kernel = Shader.FindKernel("March");
+        CombineShader = Resources.Load("Compute Shaders/CombineVerticies") as ComputeShader;
+        CombineKernel = CombineShader.FindKernel("CombineVerticies");
         noMarch = false;
     }
 
@@ -133,21 +136,44 @@ public class MarchManager : MonoBehaviour
         }
         #endregion
 
+
         if (verticies.Length > 0)
         {
             m.mesh.Clear();
             m.mesh.vertices = verticies;
             m.mesh.triangles = triangles;
             m.mesh.colors = colors;
-            m.mesh.normals = normals;
+            // m.mesh.normals = normals;
+            m.mesh.RecalculateNormals();
             m.mesh.uv = uv;
             // TODO: Manually calculate bounds in Shader
+            // TODO: Generate vertex sharing during march and correct normals
             m.mesh.RecalculateBounds();
             m.mesh.MarkModified();
             if (triangles.Length > 10 * 3) m.meshCollider.sharedMesh = m.mesh;
 
             m.updated = true;
         }
+    }
+
+    private void CombineVerticies()
+    {
+        cTriBuffer = new ComputeBuffer(triangles.Length, sizeof(int));
+        cVertBuffer = new ComputeBuffer(verticies.Length, sizeof(float) * 3);
+
+        cTriBuffer.SetData(triangles);
+        CombineShader.SetBuffer(CombineKernel, "triangles", cTriBuffer);
+
+        cVertBuffer.SetData(verticies);
+        CombineShader.SetBuffer(CombineKernel, "verticies", cVertBuffer);
+
+        CombineShader.Dispatch(Kernel, 1, 1, 1);
+
+        cTriBuffer.GetData(triangles);
+        cVertBuffer.GetData(verticies);
+
+        cTriBuffer.Dispose();
+        cVertBuffer.Dispose();
     }
 
     /*

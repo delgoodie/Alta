@@ -7,13 +7,12 @@ public class Chunk : MonoBehaviour, IMarch
     [HideInInspector]
     public Marcher marcher;
     public Vector3Int position;
-    public GameObject[] plants;
     public Vector3 center;
     private ComputeShader MarkupShader;
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
-    private GameObject kelpPrefab;
     private Mesh mesh;
+    private List<GameObject> plants;
 
     private void OnDrawGizmos()
     {
@@ -45,9 +44,9 @@ public class Chunk : MonoBehaviour, IMarch
     {
         marcher = GetComponent<Marcher>();
         mesh = GetComponent<MeshFilter>().mesh;
+        plants = new List<GameObject>();
         MarkupShader = Resources.Load("Compute Shaders/ChipMarkup") as ComputeShader;
         MarkupKernel = MarkupShader.FindKernel("ChipMarkup");
-        kelpPrefab = Resources.Load("Prefabs/Kelp") as GameObject;
     }
 
     private void Start()
@@ -83,15 +82,26 @@ public class Chunk : MonoBehaviour, IMarch
         marcher.Init();
     }
 
-    public void Chipnit() => ChunkManager.Instance.RequestChipnit(this);
+    public void Chipnit()
+    {
+        ChunkManager.Instance.RequestChipnit(this);
+    }
 
     public void MarchUpdate()
     {
         while (transform.childCount > 0) Destroy(transform.GetChild(0));
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 30; i++)
         {
-            Ray site = RandomSurfaceRay();
-            Instantiate(kelpPrefab, site.origin, Quaternion.LookRotation(Vector3.Cross(Vector3.one, site.direction), site.direction), transform);
+            GameObject p = PlantManager.Instance.GetPlant(RandomSurfaceRay());
+            if (p != null) plants.Add(p);
+            // Instantiate(kelpPrefab, site.origin, Quaternion.LookRotation(Vector3.Cross(Vector3.one, site.direction), site.direction));
         }
+    }
+
+    public void Deactivate()
+    {
+        gameObject.SetActive(false);
+        for (int i = 0; i < plants.Count; i++) PlantManager.Instance.ReleasePlant(plants[i]);
+        plants.Clear();
     }
 }

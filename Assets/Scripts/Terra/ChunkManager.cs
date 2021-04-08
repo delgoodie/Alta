@@ -95,7 +95,7 @@ public class ChunkManager : MonoBehaviour
         {
             if (chunk.gameObject.activeSelf)
             {
-                chunk.gameObject.SetActive(false);
+                chunk.Deactivate();
                 ChunkList.Remove(chunk.position);
                 chunk.position = Vector3Int.zero;
                 chunk.transform.position = Vector3.zero;
