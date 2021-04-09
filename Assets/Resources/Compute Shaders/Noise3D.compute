@@ -533,7 +533,10 @@ int maxType;
 int emptyType;
 
 float typeN;
-int octaveSize;
+int noctaves;
+
+int ceiling;
+int floor;
 
 [numthreads(1,1,1)]
 void Noise3D (uint3 id : SV_DispatchThreadID)
@@ -548,18 +551,17 @@ void Noise3D (uint3 id : SV_DispatchThreadID)
     float isoValue = 0;
 
     float3 p = float3(world.x + offX, world.y + offY, world.z + offZ);
-    for(int i=0;i<octaveSize;i++) {
+    for(int i=0;i<noctaves;i++)
         isoValue += snormal(snoise(p * float3(octaves[i].x, octaves[i].y, octaves[i].z))) * octaves[i].w;
-    }
     
     // s *= 1.4 * snoise(float3(1, world.y * .03, 1));
     // s += .1 * snoise(float3(world.x * .006, 1, world.x * .006));
 
+    if(world.y > ceiling) chips[index] = iso(chips[index], 0);
+    else if(world.y < floor) chips[index] = iso(chips[index], 256);
+    else chips[index] = iso(chips[index], normalToByte(isoValue));
     
-    chips[index] = iso(chips[index], normalToByte(isoValue));
     
-    if(iso(chips[index]) > 128){
-        chips[index] = type(chips[index],  randomSolid(world * typeN, minType, maxType));   
-
-    } else chips[index] = type(chips[index], emptyType);   
+    if(iso(chips[index]) > 128) chips[index] = type(chips[index],  randomSolid(world * typeN, minType, maxType));   
+    else chips[index] = type(chips[index], emptyType);   
 }

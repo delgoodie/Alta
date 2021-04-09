@@ -33,7 +33,6 @@ class PlantManager : MonoBehaviour
                 pools[i].Enqueue(p);
             }
         }
-        Debug.Log(pools[0].Count);
     }
 
     private void Start()
@@ -87,7 +86,7 @@ class PlantManager : MonoBehaviour
             {
                 GameObject p = pools[i].Dequeue();
                 p.transform.position = site.origin;
-                p.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.one, site.direction), site.direction);
+                p.transform.rotation = Quaternion.LookRotation(Vector3.Cross(new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)), site.direction), site.direction);
                 p.SetActive(true);
                 return p;
             }

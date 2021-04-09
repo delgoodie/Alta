@@ -8,11 +8,14 @@ public class ChunkManager : MonoBehaviour
     public int RenderDistance;
     [Header("Chunk")]
     public int Size;
+    public bool RunChunkUpdate;
+
     [Header("Noise")]
     public Vector3Int Offset;
     public float TypeNoise;
     public Vector4[] NoiseOctaves;
-    public bool RunChunkUpdate;
+    public int Ceiling;
+    public int Floor;
 
     [HideInInspector]
     public static ChunkManager Instance;
@@ -164,8 +167,11 @@ public class ChunkManager : MonoBehaviour
         NoiseShader.SetInt("maxType", 23);
         NoiseShader.SetInt("emptyType", 0);
 
+        NoiseShader.SetInt("ceiling", Ceiling);
+        NoiseShader.SetInt("floor", Floor);
+
         NoiseShader.SetFloat("typeN", TypeNoise);
-        NoiseShader.SetInt("octaveSize", NoiseOctaves.Length);
+        NoiseShader.SetInt("noctaves", NoiseOctaves.Length);
 
         NoiseShader.Dispatch(NoiseKernel, Size, Size, Size);
 

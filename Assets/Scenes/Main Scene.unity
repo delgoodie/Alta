@@ -168,6 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RenderDistance: 5
   Size: 16
+  RunChunkUpdate: 0
   Offset: {x: 3029, y: 3029, z: 3033}
   TypeNoise: 0.01
   NoiseOctaves:
@@ -175,7 +176,8 @@ MonoBehaviour:
   - {x: 0.07, y: 0.07, z: 0.07, w: 0.2}
   - {x: 0.1, y: 0.1, z: 0.1, w: 0.1}
   - {x: 0.2, y: 0.2, z: 0.2, w: 0.05}
-  RunChunkUpdate: 0
+  Ceiling: -20
+  Floor: -500
   noMarch: 0
 --- !u!1 &395199362
 GameObject:
@@ -332,7 +334,7 @@ MonoBehaviour:
   frequencies:
   - 1
   PLANT_COUNT: 30000
---- !u!1 &1251648685
+--- !u!1 &1738412400
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -340,10 +342,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1251648689}
-  - component: {fileID: 1251648688}
-  - component: {fileID: 1251648687}
-  - component: {fileID: 1251648686}
+  - component: {fileID: 1738412401}
+  - component: {fileID: 1738412404}
+  - component: {fileID: 1738412403}
+  - component: {fileID: 1738412402}
   m_Layer: 0
   m_Name: Surface Bottom
   m_TagString: Untagged
@@ -351,13 +353,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &1251648686
+--- !u!4 &1738412401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738412400}
+  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_Children: []
+  m_Father: {fileID: 1992105160}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+--- !u!64 &1738412402
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251648685}
+  m_GameObject: {fileID: 1738412400}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
@@ -365,13 +381,13 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1251648687
+--- !u!23 &1738412403
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251648685}
+  m_GameObject: {fileID: 1738412400}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -385,7 +401,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 09c921aac9de19244855cf931ad3c405, type: 2}
+  - {fileID: 2100000, guid: ff4af8b9c441c574c868b416603d0e2e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -407,28 +423,14 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1251648688
+--- !u!33 &1738412404
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251648685}
+  m_GameObject: {fileID: 1738412400}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1251648689
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251648685}
-  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 50, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
-  m_Children: []
-  m_Father: {fileID: 1992105160}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
 --- !u!1 &1992105159
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +460,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 395199363}
-  - {fileID: 1251648689}
+  - {fileID: 1738412401}
   m_Father: {fileID: 2118663940}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -477,7 +479,7 @@ MonoBehaviour:
   activePlayer: 0
   playerPrefab: {fileID: 0}
   UnderwaterVolume: {fileID: 395199363}
-  SurfaceBottom: {fileID: 1251648689}
+  SurfaceBottom: {fileID: 1738412401}
 --- !u!1 &2118663939
 GameObject:
   m_ObjectHideFlags: 0

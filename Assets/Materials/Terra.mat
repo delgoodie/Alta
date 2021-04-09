@@ -156,15 +156,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Algae_Group_Cutoff: 0.05
-    - Algae_Group_Size: 100
-    - Algae_Percent: 1.5
-    - Algae_Size: 1
+    - Algae_Group_Cutoff: 0.18
+    - Algae_Group_Size: 101.63
+    - Algae_Percent: 1.64
+    - Algae_Size: 0.95
     - Ambient_Occlusion: 1
-    - Gray_Spots_Lerp: 0.7
-    - Gray_Spots_Size: 1
+    - Gray_Spots_Lerp: 0.882
+    - Gray_Spots_Size: 2.04
     - Metallic: 0.4
-    - Normal_Scale: 0.5
+    - Normal_Scale: 0.31
     - Normal_Strength: 0.35
     - Smoothness: 0.2
     - _AORemapMax: 1

@@ -136,6 +136,7 @@ public class MarchManager : MonoBehaviour
         }
         #endregion
 
+        m.mesh.Clear();
 
         if (verticies.Length > 0)
         {
