@@ -2,6 +2,7 @@
 
 class GameManager : MonoBehaviour
 {
+    public bool spawnPlayer;
     public int tickSpan;
     public int tick;
     public bool tick1;
@@ -60,7 +61,7 @@ class GameManager : MonoBehaviour
         }
         else
         {
-            if (MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
+            if (spawnPlayer && MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
         }
 
     }

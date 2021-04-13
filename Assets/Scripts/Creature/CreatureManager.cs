@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
-
-class PlantManager : EntityManager
+using System.Collections.Generic;
+class CreatureManager : EntityManager
 {
-    public static PlantManager Instance;
+    public static CreatureManager Instance;
+
     private void Awake()
     {
         Instance = this;
@@ -13,7 +13,6 @@ class PlantManager : EntityManager
     private void Start()
     {
     }
-
     private void Update()
     {
     }

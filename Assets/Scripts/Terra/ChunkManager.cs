@@ -23,7 +23,7 @@ public class ChunkManager : MonoBehaviour
     public bool noMarch;
     #endregion
     #region PRIVATE
-    private Dictionary<Vector3Int, Chunk> ChunkList;
+    public Dictionary<Vector3Int, Chunk> ChunkList;
     private Queue<Chunk> RecycledChunkList;
     private Queue<Chunk> ChipnitQueue;
     private GameObject ChunkObject;
@@ -68,6 +68,12 @@ public class ChunkManager : MonoBehaviour
         }
         else noMarch = true;
 
+    }
+    public Chunk GetChunk(Vector3Int position)
+    {
+        if (ChunkList.ContainsKey(position))
+            return ChunkList[position];
+        else return null;
     }
 
     public void ChunkUpdate(Vector3Int position)

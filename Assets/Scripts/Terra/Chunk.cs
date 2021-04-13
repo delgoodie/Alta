@@ -12,7 +12,8 @@ public class Chunk : MonoBehaviour, IMarch
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
     private Mesh mesh;
-    private List<GameObject> plants;
+    public List<GameObject> plants;
+    public List<GameObject> creatures;
 
     private void OnDrawGizmos()
     {
@@ -45,6 +46,7 @@ public class Chunk : MonoBehaviour, IMarch
         marcher = GetComponent<Marcher>();
         mesh = GetComponent<MeshFilter>().mesh;
         plants = new List<GameObject>();
+        creatures = new List<GameObject>();
         MarkupShader = Resources.Load("Compute Shaders/ChipMarkup") as ComputeShader;
         MarkupKernel = MarkupShader.FindKernel("ChipMarkup");
     }
@@ -74,7 +76,6 @@ public class Chunk : MonoBehaviour, IMarch
         marcher.chips = data.chips;
         marcher.size = data.size;
         Chipnit();
-        Mesh g = new Mesh();
     }
 
     public void ChipUpdate()
@@ -92,16 +93,24 @@ public class Chunk : MonoBehaviour, IMarch
         while (transform.childCount > 0) Destroy(transform.GetChild(0));
         for (int i = 0; i < 30; i++)
         {
-            GameObject p = PlantManager.Instance.GetPlant(RandomSurfaceRay());
+            GameObject p = PlantManager.Instance.Retrieve(RandomSurfaceRay());
             if (p != null) plants.Add(p);
-            // Instantiate(kelpPrefab, site.origin, Quaternion.LookRotation(Vector3.Cross(Vector3.one, site.direction), site.direction));
+            int x = Random.Range(0, 16), y = Random.Range(0, 16), z = Random.Range(0, 16);
+            if (marcher.chips[x * 16 * 16 + y * 16 + z].iso < 128)
+            {
+                Ray es = new Ray(transform.position + new Vector3(x, y, z), Random.rotation * Vector3.forward);
+                GameObject c = CreatureManager.Instance.Retrieve(es);
+                if (c != null) creatures.Add(c);
+            }
         }
     }
 
     public void Deactivate()
     {
         gameObject.SetActive(false);
-        for (int i = 0; i < plants.Count; i++) PlantManager.Instance.ReleasePlant(plants[i]);
+        for (int i = 0; i < plants.Count; i++) PlantManager.Instance.Release(plants[i]);
+        for (int i = 0; i < creatures.Count; i++) CreatureManager.Instance.Release(creatures[i]);
         plants.Clear();
+        creatures.Clear();
     }
 }
