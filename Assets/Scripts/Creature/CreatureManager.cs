@@ -1,13 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-class CreatureManager : EntityManager
+class CreatureManager : MonoBehaviour
 {
     public static CreatureManager Instance;
 
     private void Awake()
     {
         Instance = this;
-        base.Init();
     }
 
     private void Start()

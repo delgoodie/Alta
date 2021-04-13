@@ -2,98 +2,47 @@ using UnityEngine;
 using System.Collections.Generic;
 class EntityManager : MonoBehaviour
 {
+    public static EntityManager Instance;
     [SerializeField]
-    private GameObject[] prefabs;
-    [Range(0, 1)]
+    public string[] keys;
+    public GameObject[] prefabs;
     [SerializeField]
-    private float[] frequencies;
+    public int[] counts;
     [SerializeField]
-    [Min(100)]
-    private int COUNT;
-    private Queue<GameObject>[] pools;
+    private Dictionary<string, Queue<GameObject>> pools;
 
-    public void Init()
+    private void Awake()
     {
-        pools = new Queue<GameObject>[prefabs.Length];
-        float sum = 0f;
-        for (int i = 0; i < frequencies.Length; i++) sum += frequencies[i];
+        Instance = this;
 
-        for (int i = 0; i < pools.Length; i++)
+        if (prefabs.Length != counts.Length || counts.Length != keys.Length) Debug.LogError("Keys - Prefabs - Counts not same Length");
+        int n = prefabs.Length;
+
+        pools = new Dictionary<string, Queue<GameObject>>(n);
+        for (int i = 0; i < n; i++)
         {
-            pools[i] = new Queue<GameObject>();
-            int count = COUNT * (int)(frequencies[i] / (float)sum);
-            for (int j = 0; j < count; j++)
+            Transform pool_t = new GameObject(keys[i]).transform;
+            pool_t.parent = transform;
+            Queue<GameObject> temp = new Queue<GameObject>(counts[i]);
+            for (int j = 0; j < counts[i]; j++)
             {
-                GameObject e = Instantiate(prefabs[i], Vector3.zero, Quaternion.identity, transform);
-                e.SetActive(false);
-                pools[i].Enqueue(e);
+                GameObject e = Instantiate(prefabs[i], Vector3.zero, Quaternion.identity, pool_t.transform);
+                e.GetComponent<IEntity>().Deactivate();
+                temp.Enqueue(e);
             }
+            pools.Add(keys[i], temp);
         }
     }
 
-    private void Start()
+    public GameObject Retrieve(string key)
     {
+        pools[key].Peek().GetComponent<IEntity>().Activate();
+        return pools[key].Dequeue();
     }
 
-    private void Update()
+    public void Release(string key, GameObject entity)
     {
-
-    }
-
-    private List<int> RandomRank()
-    {
-        List<int> index = new List<int>();
-        List<float> rank = new List<float>();
-        for (int i = 0; i < frequencies.Length; i++)
-        {
-            if (pools[i].Count > 0)
-            {
-                index.Add(i);
-                rank.Add(frequencies[i] * Random.Range(0f, 1f));
-            }
-        }
-        bool sorted = false;
-        while (!sorted)
-        {
-            sorted = true;
-            for (int i = 1; i < index.Count; i++)
-            {
-                if (rank[index[i]] > rank[index[i - 1]])
-                {
-                    float rtemp = rank[index[i]];
-                    rank[index[i]] = rank[index[i - 1]];
-                    rank[index[i - 1]] = rtemp;
-                    int itemp = index[i];
-                    index[i] = index[i - 1];
-                    index[i - 1] = index[i];
-                    sorted = false;
-                }
-            }
-        }
-        return index;
-    }
-
-    public GameObject Retrieve(Ray site)
-    {
-        List<int> rank = RandomRank();
-        for (int i = 0; i < rank.Count; i++)
-        {
-            IEntity e_script = pools[rank[i]].Peek().GetComponent<IEntity>();
-            if (e_script == null || e_script.TestSite(site))
-            {
-                GameObject e = pools[rank[i]].Dequeue();
-                e.transform.position = site.origin;
-                e.transform.rotation = Quaternion.LookRotation(Vector3.Cross(new Vector3(Random.Range(1f, 2f), Random.Range(1f, 2f), Random.Range(1f, 2f)), site.direction.normalized), site.direction);
-                e.SetActive(true);
-                return e;
-            }
-        }
-        return null;
-    }
-
-    public void Release(GameObject entity)
-    {
-        entity.SetActive(false);
-        pools[0].Enqueue(entity);
+        entity.GetComponent<IEntity>().Deactivate();
+        pools[key].Enqueue(entity);
     }
 }

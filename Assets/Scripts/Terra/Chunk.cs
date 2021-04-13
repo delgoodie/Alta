@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Marcher))]
-public class Chunk : MonoBehaviour, IMarch
+public class Chunk : MonoBehaviour, IMarch, IEntity
 {
     [HideInInspector]
     public Marcher marcher;
@@ -93,24 +93,30 @@ public class Chunk : MonoBehaviour, IMarch
         while (transform.childCount > 0) Destroy(transform.GetChild(0));
         for (int i = 0; i < 30; i++)
         {
-            GameObject p = PlantManager.Instance.Retrieve(RandomSurfaceRay());
+            GameObject p = PlantManager.Instance.Kelp(RandomSurfaceRay());
             if (p != null) plants.Add(p);
-            int x = Random.Range(0, 16), y = Random.Range(0, 16), z = Random.Range(0, 16);
-            if (marcher.chips[x * 16 * 16 + y * 16 + z].iso < 128)
-            {
-                Ray es = new Ray(transform.position + new Vector3(x, y, z), Random.rotation * Vector3.forward);
-                GameObject c = CreatureManager.Instance.Retrieve(es);
-                if (c != null) creatures.Add(c);
-            }
+            // int x = Random.Range(0, 16), y = Random.Range(0, 16), z = Random.Range(0, 16);
+            // if (marcher.chips[x * 16 * 16 + y * 16 + z].iso < 128)
+            // {
+            //     Ray es = new Ray(transform.position + new Vector3(x, y, z), Random.rotation * Vector3.forward);
+            //     GameObject c = CreatureManager.Instance.Retrieve(es);
+            //     if (c != null) creatures.Add(c);
+            // }
         }
     }
 
     public void Deactivate()
     {
-        gameObject.SetActive(false);
-        for (int i = 0; i < plants.Count; i++) PlantManager.Instance.Release(plants[i]);
-        for (int i = 0; i < creatures.Count; i++) CreatureManager.Instance.Release(creatures[i]);
+        // for (int i = 0; i < plants.Count; i++) PlantManager.Instance.Release(plants[i]);
+        // for (int i = 0; i < creatures.Count; i++) CreatureManager.Instance.Release(creatures[i]);
         plants.Clear();
         creatures.Clear();
+        gameObject.SetActive(false);
+    }
+    public void Activate()
+    {
+        // for (int i = 0; i < plants.Count; i++) PlantManager.Instance.Release(plants[i]);
+        // for (int i = 0; i < creatures.Count; i++) CreatureManager.Instance.Release(creatures[i]);
+        gameObject.SetActive(true);
     }
 }

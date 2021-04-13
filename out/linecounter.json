@@ -1,0 +1,510 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "c:\\Users\\luked\\Documents\\Unity\\Projects\\Alta",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2021-04-13 09:48:06",
+            "filesum": 71,
+            "codesum": 22625,
+            "commentsum": 486,
+            "blanksum": 888,
+            "statistics": {
+                ".shadergraph": {
+                    "code": 12632,
+                    "comment": 0,
+                    "blank": 424
+                },
+                ".asset": {
+                    "code": 1722,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".shadersubgraph": {
+                    "code": 1938,
+                    "comment": 0,
+                    "blank": 62
+                },
+                ".cs": {
+                    "code": 2215,
+                    "comment": 297,
+                    "blank": 248
+                },
+                ".json": {
+                    "code": 15,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".preset": {
+                    "code": 2039,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".compute": {
+                    "code": 1097,
+                    "comment": 167,
+                    "blank": 126
+                },
+                ".mat": {
+                    "code": 885,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".md": {
+                    "code": 30,
+                    "comment": 5,
+                    "blank": 18
+                },
+                ".hlsl": {
+                    "code": 20,
+                    "comment": 12,
+                    "blank": 5
+                },
+                ".asmdef": {
+                    "code": 30,
+                    "comment": 0,
+                    "blank": 5
+                },
+                "": {
+                    "code": 2,
+                    "comment": 5,
+                    "blank": 0
+                }
+            },
+            "filelist": [
+                {
+                    "filename": "Assets\\Fbx\\kelp.fbx",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 707,
+                    "comment": 0,
+                    "filename": "Assets\\HDRPDefaultResources\\DefaultSettingsVolumeProfile.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 24,
+                    "comment": 0,
+                    "filename": "Assets\\HDRPDefaultResources\\FoliageDiffusionProfile.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 448,
+                    "comment": 0,
+                    "filename": "Assets\\HDRPDefaultResources\\HDRenderPipelineAsset.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 24,
+                    "comment": 0,
+                    "filename": "Assets\\HDRPDefaultResources\\SkinDiffusionProfile.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 113,
+                    "comment": 0,
+                    "filename": "Assets\\Materials\\Kelp.mat"
+                },
+                {
+                    "blank": 0,
+                    "code": 268,
+                    "comment": 0,
+                    "filename": "Assets\\Materials\\MC UVs.mat"
+                },
+                {
+                    "blank": 0,
+                    "code": 89,
+                    "comment": 0,
+                    "filename": "Assets\\Materials\\Skybox_Mat.mat"
+                },
+                {
+                    "blank": 0,
+                    "code": 113,
+                    "comment": 0,
+                    "filename": "Assets\\Materials\\Surface Bottom.mat"
+                },
+                {
+                    "blank": 0,
+                    "code": 302,
+                    "comment": 0,
+                    "filename": "Assets\\Materials\\Terra.mat"
+                },
+                {
+                    "blank": 0,
+                    "code": 137,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\AudioCompressedInMemory.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 137,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\AudioStreaming.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 497,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\Defaults\\AlbedoTexture_Default.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 137,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\Defaults\\AudioDecompressOnLoad.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 137,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\Defaults\\DirectionalLight_Default.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 497,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\NormalTexture.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 497,
+                    "comment": 0,
+                    "filename": "Assets\\Presets\\UtilityTexture.preset"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 0,
+                    "filename": "Assets\\Resources\\BillingMode.json"
+                },
+                {
+                    "blank": 13,
+                    "code": 61,
+                    "comment": 29,
+                    "filename": "Assets\\Resources\\Compute Shaders\\ChipMarkup.compute"
+                },
+                {
+                    "blank": 2,
+                    "code": 14,
+                    "comment": 0,
+                    "filename": "Assets\\Resources\\Compute Shaders\\CombineVerticies.compute"
+                },
+                {
+                    "blank": 23,
+                    "code": 656,
+                    "comment": 4,
+                    "filename": "Assets\\Resources\\Compute Shaders\\March.compute"
+                },
+                {
+                    "blank": 88,
+                    "code": 366,
+                    "comment": 134,
+                    "filename": "Assets\\Resources\\Compute Shaders\\Noise3D.compute"
+                },
+                {
+                    "blank": 0,
+                    "code": 5,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Arbor\\IPlant.cs"
+                },
+                {
+                    "blank": 4,
+                    "code": 23,
+                    "comment": 53,
+                    "filename": "Assets\\Scripts\\Arbor\\PlantManager.cs"
+                },
+                {
+                    "blank": 3,
+                    "code": 21,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Arbor\\Species\\Kelp.cs"
+                },
+                {
+                    "blank": 2,
+                    "code": 16,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Creature\\CreatureManager.cs"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Creature\\ICreature.cs"
+                },
+                {
+                    "blank": 4,
+                    "code": 43,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Creature\\Species\\Fish.cs"
+                },
+                {
+                    "blank": 5,
+                    "code": 43,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Dominus\\EntityManager.cs"
+                },
+                {
+                    "blank": 12,
+                    "code": 115,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Dominus\\GameManager.cs"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Dominus\\IEntity.cs"
+                },
+                {
+                    "blank": 14,
+                    "code": 72,
+                    "comment": 4,
+                    "filename": "Assets\\Scripts\\Lusius\\PlayerController.cs"
+                },
+                {
+                    "blank": 7,
+                    "code": 45,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Lusius\\PlayerManager.cs"
+                },
+                {
+                    "blank": 29,
+                    "code": 124,
+                    "comment": 7,
+                    "filename": "Assets\\Scripts\\Lusius\\SimpleCameraController.cs"
+                },
+                {
+                    "blank": 4,
+                    "code": 91,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Materia\\Chips.cs"
+                },
+                {
+                    "blank": 0,
+                    "code": 5,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Materia\\IMarch.cs"
+                },
+                {
+                    "blank": 11,
+                    "code": 116,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Materia\\Marcher.cs"
+                },
+                {
+                    "blank": 29,
+                    "code": 158,
+                    "comment": 33,
+                    "filename": "Assets\\Scripts\\Materia\\MarchManager.cs"
+                },
+                {
+                    "blank": 13,
+                    "code": 95,
+                    "comment": 14,
+                    "filename": "Assets\\Scripts\\Terra\\Chunk.cs"
+                },
+                {
+                    "blank": 1,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Terra\\ChunkData.cs"
+                },
+                {
+                    "blank": 6,
+                    "code": 31,
+                    "comment": 1,
+                    "filename": "Assets\\Scripts\\Terra\\ChunkLoader.cs"
+                },
+                {
+                    "blank": 46,
+                    "code": 355,
+                    "comment": 16,
+                    "filename": "Assets\\Scripts\\Terra\\ChunkManager.cs"
+                },
+                {
+                    "blank": 27,
+                    "code": 711,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Testing Scripts\\MC_Demo.cs"
+                },
+                {
+                    "blank": 6,
+                    "code": 61,
+                    "comment": 0,
+                    "filename": "Assets\\Scripts\\Testing Scripts\\MC_UVs.cs"
+                },
+                {
+                    "blank": 4,
+                    "code": 0,
+                    "comment": 53,
+                    "filename": "Assets\\Scripts\\Testing Scripts\\TestEnvEditor.cs"
+                },
+                {
+                    "blank": 9,
+                    "code": 0,
+                    "comment": 44,
+                    "filename": "Assets\\Scripts\\Testing Scripts\\TestEnvScript.cs"
+                },
+                {
+                    "blank": 0,
+                    "code": 36,
+                    "comment": 0,
+                    "filename": "Assets\\Settings\\ForwardRenderer.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 300,
+                    "comment": 0,
+                    "filename": "Assets\\Settings\\SampleSceneProfile.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 61,
+                    "comment": 0,
+                    "filename": "Assets\\Settings\\UniversalRP-HighQuality.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 61,
+                    "comment": 0,
+                    "filename": "Assets\\Settings\\UniversalRP-LowQuality.asset"
+                },
+                {
+                    "blank": 0,
+                    "code": 61,
+                    "comment": 0,
+                    "filename": "Assets\\Settings\\UniversalRP-MediumQuality.asset"
+                },
+                {
+                    "blank": 89,
+                    "code": 2664,
+                    "comment": 0,
+                    "filename": "Assets\\Shaders\\Kelp.shadergraph"
+                },
+                {
+                    "blank": 47,
+                    "code": 1248,
+                    "comment": 0,
+                    "filename": "Assets\\Shaders\\MC UVs.shadergraph"
+                },
+                {
+                    "blank": 129,
+                    "code": 3708,
+                    "comment": 0,
+                    "filename": "Assets\\Shaders\\Surface Bottom.shadergraph"
+                },
+                {
+                    "blank": 159,
+                    "code": 5012,
+                    "comment": 0,
+                    "filename": "Assets\\Shaders\\Terra.shadergraph"
+                },
+                {
+                    "blank": 62,
+                    "code": 1938,
+                    "comment": 0,
+                    "filename": "Assets\\Shaders\\World Noise.shadersubgraph"
+                },
+                {
+                    "filename": "Assets\\Textures\\7808-normal.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "Assets\\Textures\\normal_mapping_normal_map.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "Assets\\Textures\\seaweed.jpg",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "Assets\\Textures\\seaweed.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 0,
+                    "code": 2,
+                    "comment": 5,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\.npmignore"
+                },
+                {
+                    "blank": 14,
+                    "code": 23,
+                    "comment": 2,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\CHANGELOG.md"
+                },
+                {
+                    "blank": 2,
+                    "code": 4,
+                    "comment": 2,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Documentation~\\index.md"
+                },
+                {
+                    "blank": 2,
+                    "code": 3,
+                    "comment": 1,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\LICENSE.md"
+                },
+                {
+                    "blank": 0,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\package.json"
+                },
+                {
+                    "blank": 11,
+                    "code": 50,
+                    "comment": 72,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Runtime\\ShaderConfig.cs"
+                },
+                {
+                    "blank": 5,
+                    "code": 20,
+                    "comment": 12,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Runtime\\ShaderConfig.cs.hlsl"
+                },
+                {
+                    "blank": 1,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Runtime\\Unity.RenderPipelines.HighDefinition.Config.Runtime.asmdef"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 0,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Tests\\.tests.json"
+                },
+                {
+                    "blank": 1,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Tests\\Editor\\ConfigurationTest.cs"
+                },
+                {
+                    "blank": 4,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "LocalPackages\\com.unity.render-pipelines.high-definition-config\\Tests\\Editor\\Unity.RenderPipelines.HighDefinitionConfig.Editor.Tests.asmdef"
+                }
+            ]
+        }
+    ]
+}

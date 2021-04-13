@@ -1,0 +1,99 @@
+===============================================================================
+EXTENSION NAME : linecounter
+EXTENSION VERSION : 0.2.7
+-------------------------------------------------------------------------------
+count time : 2021-04-13 09:48:06
+count workspace : c:\Users\luked\Documents\Unity\Projects\Alta
+total files : 71
+total code lines : 22625
+total comment lines : 486
+total blank lines : 888
+
+    statistics
+   |      extension|     total code|  total comment|    total blank|percent|
+   -------------------------------------------------------------------------
+   |   .shadergraph|          12632|              0|            424|     56|
+   |         .asset|           1722|              0|              0|    7.6|
+   |.shadersubgraph|           1938|              0|             62|    8.6|
+   |            .cs|           2215|            297|            248|    9.8|
+   |          .json|             15|              0|              0|  0.066|
+   |        .preset|           2039|              0|              0|    9.0|
+   |       .compute|           1097|            167|            126|    4.8|
+   |           .mat|            885|              0|              0|    3.9|
+   |            .md|             30|              5|             18|   0.13|
+   |          .hlsl|             20|             12|              5|  0.088|
+   |        .asmdef|             30|              0|              5|   0.13|
+   |               |              2|              5|              0| 0.0088|
+   -------------------------------------------------------------------------
+Assets\Fbx\kelp.fbx, it is a binary file.
+Assets\HDRPDefaultResources\DefaultSettingsVolumeProfile.asset, code is 707, comment is 0, blank is 0.
+Assets\HDRPDefaultResources\FoliageDiffusionProfile.asset, code is 24, comment is 0, blank is 0.
+Assets\HDRPDefaultResources\HDRenderPipelineAsset.asset, code is 448, comment is 0, blank is 0.
+Assets\HDRPDefaultResources\SkinDiffusionProfile.asset, code is 24, comment is 0, blank is 0.
+Assets\Materials\Kelp.mat, code is 113, comment is 0, blank is 0.
+Assets\Materials\MC UVs.mat, code is 268, comment is 0, blank is 0.
+Assets\Materials\Skybox_Mat.mat, code is 89, comment is 0, blank is 0.
+Assets\Materials\Surface Bottom.mat, code is 113, comment is 0, blank is 0.
+Assets\Materials\Terra.mat, code is 302, comment is 0, blank is 0.
+Assets\Presets\AudioCompressedInMemory.preset, code is 137, comment is 0, blank is 0.
+Assets\Presets\AudioStreaming.preset, code is 137, comment is 0, blank is 0.
+Assets\Presets\Defaults\AlbedoTexture_Default.preset, code is 497, comment is 0, blank is 0.
+Assets\Presets\Defaults\AudioDecompressOnLoad.preset, code is 137, comment is 0, blank is 0.
+Assets\Presets\Defaults\DirectionalLight_Default.preset, code is 137, comment is 0, blank is 0.
+Assets\Presets\NormalTexture.preset, code is 497, comment is 0, blank is 0.
+Assets\Presets\UtilityTexture.preset, code is 497, comment is 0, blank is 0.
+Assets\Resources\BillingMode.json, code is 1, comment is 0, blank is 0.
+Assets\Resources\Compute Shaders\ChipMarkup.compute, code is 61, comment is 29, blank is 13.
+Assets\Resources\Compute Shaders\CombineVerticies.compute, code is 14, comment is 0, blank is 2.
+Assets\Resources\Compute Shaders\March.compute, code is 656, comment is 4, blank is 23.
+Assets\Resources\Compute Shaders\Noise3D.compute, code is 366, comment is 134, blank is 88.
+Assets\Scripts\Arbor\IPlant.cs, code is 5, comment is 0, blank is 0.
+Assets\Scripts\Arbor\PlantManager.cs, code is 23, comment is 53, blank is 4.
+Assets\Scripts\Arbor\Species\Kelp.cs, code is 21, comment is 0, blank is 3.
+Assets\Scripts\Creature\CreatureManager.cs, code is 16, comment is 0, blank is 2.
+Assets\Scripts\Creature\ICreature.cs, code is 4, comment is 0, blank is 0.
+Assets\Scripts\Creature\Species\Fish.cs, code is 43, comment is 0, blank is 4.
+Assets\Scripts\Dominus\EntityManager.cs, code is 43, comment is 0, blank is 5.
+Assets\Scripts\Dominus\GameManager.cs, code is 115, comment is 0, blank is 12.
+Assets\Scripts\Dominus\IEntity.cs, code is 6, comment is 0, blank is 0.
+Assets\Scripts\Lusius\PlayerController.cs, code is 72, comment is 4, blank is 14.
+Assets\Scripts\Lusius\PlayerManager.cs, code is 45, comment is 0, blank is 7.
+Assets\Scripts\Lusius\SimpleCameraController.cs, code is 124, comment is 7, blank is 29.
+Assets\Scripts\Materia\Chips.cs, code is 91, comment is 0, blank is 4.
+Assets\Scripts\Materia\IMarch.cs, code is 5, comment is 0, blank is 0.
+Assets\Scripts\Materia\Marcher.cs, code is 116, comment is 0, blank is 11.
+Assets\Scripts\Materia\MarchManager.cs, code is 158, comment is 33, blank is 29.
+Assets\Scripts\Terra\Chunk.cs, code is 95, comment is 14, blank is 13.
+Assets\Scripts\Terra\ChunkData.cs, code is 13, comment is 0, blank is 1.
+Assets\Scripts\Terra\ChunkLoader.cs, code is 31, comment is 1, blank is 6.
+Assets\Scripts\Terra\ChunkManager.cs, code is 355, comment is 16, blank is 46.
+Assets\Scripts\Testing Scripts\MC_Demo.cs, code is 711, comment is 0, blank is 27.
+Assets\Scripts\Testing Scripts\MC_UVs.cs, code is 61, comment is 0, blank is 6.
+Assets\Scripts\Testing Scripts\TestEnvEditor.cs, code is 0, comment is 53, blank is 4.
+Assets\Scripts\Testing Scripts\TestEnvScript.cs, code is 0, comment is 44, blank is 9.
+Assets\Settings\ForwardRenderer.asset, code is 36, comment is 0, blank is 0.
+Assets\Settings\SampleSceneProfile.asset, code is 300, comment is 0, blank is 0.
+Assets\Settings\UniversalRP-HighQuality.asset, code is 61, comment is 0, blank is 0.
+Assets\Settings\UniversalRP-LowQuality.asset, code is 61, comment is 0, blank is 0.
+Assets\Settings\UniversalRP-MediumQuality.asset, code is 61, comment is 0, blank is 0.
+Assets\Shaders\Kelp.shadergraph, code is 2664, comment is 0, blank is 89.
+Assets\Shaders\MC UVs.shadergraph, code is 1248, comment is 0, blank is 47.
+Assets\Shaders\Surface Bottom.shadergraph, code is 3708, comment is 0, blank is 129.
+Assets\Shaders\Terra.shadergraph, code is 5012, comment is 0, blank is 159.
+Assets\Shaders\World Noise.shadersubgraph, code is 1938, comment is 0, blank is 62.
+Assets\Textures\7808-normal.jpg, it is a binary file.
+Assets\Textures\normal_mapping_normal_map.png, it is a binary file.
+Assets\Textures\seaweed.jpg, it is a binary file.
+Assets\Textures\seaweed.png, it is a binary file.
+LocalPackages\com.unity.render-pipelines.high-definition-config\.npmignore, code is 2, comment is 5, blank is 0.
+LocalPackages\com.unity.render-pipelines.high-definition-config\CHANGELOG.md, code is 23, comment is 2, blank is 14.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Documentation~\index.md, code is 4, comment is 2, blank is 2.
+LocalPackages\com.unity.render-pipelines.high-definition-config\LICENSE.md, code is 3, comment is 1, blank is 2.
+LocalPackages\com.unity.render-pipelines.high-definition-config\package.json, code is 11, comment is 0, blank is 0.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Runtime\ShaderConfig.cs, code is 50, comment is 72, blank is 11.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Runtime\ShaderConfig.cs.hlsl, code is 20, comment is 12, blank is 5.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Runtime\Unity.RenderPipelines.HighDefinition.Config.Runtime.asmdef, code is 13, comment is 0, blank is 1.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Tests\.tests.json, code is 3, comment is 0, blank is 0.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Tests\Editor\ConfigurationTest.cs, code is 12, comment is 0, blank is 1.
+LocalPackages\com.unity.render-pipelines.high-definition-config\Tests\Editor\Unity.RenderPipelines.HighDefinitionConfig.Editor.Tests.asmdef, code is 17, comment is 0, blank is 4.
+===============================================================================

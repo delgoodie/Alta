@@ -24,10 +24,9 @@ public class ChunkManager : MonoBehaviour
     #endregion
     #region PRIVATE
     public Dictionary<Vector3Int, Chunk> ChunkList;
-    private Queue<Chunk> RecycledChunkList;
-    private Queue<Chunk> ChipnitQueue;
-    private GameObject ChunkObject;
+    //TODO: Make update list static and just use offsets to find update coords
     private List<Vector3Int> UpdateList;
+    private Queue<Chunk> ChipnitQueue;
     private ComputeShader NoiseShader;
     private int NoiseKernel;
     private ComputeBuffer ChipsBuffer, OctaveBuffer;
@@ -37,13 +36,12 @@ public class ChunkManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        //TODO: Calculate fixed capacity from render distance
         UpdateList = new List<Vector3Int>();
         ChunkList = new Dictionary<Vector3Int, Chunk>();
-        RecycledChunkList = new Queue<Chunk>();
         ChipnitQueue = new Queue<Chunk>();
         mChips = new int[Size * Size * Size];
         for (int i = 0; i < mChips.Length; i++) mChips[i] = 0;
-        ChunkObject = Resources.Load("Prefabs/ChunkObject") as GameObject;
         NoiseShader = Resources.Load("Compute Shaders/Noise3D") as ComputeShader;
         NoiseKernel = NoiseShader.FindKernel("Noise3D");
     }
@@ -69,6 +67,7 @@ public class ChunkManager : MonoBehaviour
         else noMarch = true;
 
     }
+
     public Chunk GetChunk(Vector3Int position)
     {
         if (ChunkList.ContainsKey(position))
@@ -78,9 +77,9 @@ public class ChunkManager : MonoBehaviour
 
     public void ChunkUpdate(Vector3Int position)
     {
-        UpdateList.Clear();
 
-        // FIND CHUNKS AROUND POSITION FROM RENDER DISTANCE
+        #region POPULATE UPDATE LIST FROM POSITION AND RENDER DISTANCE
+        UpdateList.Clear();
         for (int y = position.y - RenderDistance / 2 - 1; y < position.y + RenderDistance / 2; y++)
         {
             for (int x = position.x - RenderDistance; x <= position.x + RenderDistance; x++)
@@ -93,25 +92,22 @@ public class ChunkManager : MonoBehaviour
                     UpdateList.Add(new Vector3Int(x, y, position.z - (RenderDistance - i + 1)));
                 }
         }
+        #endregion
 
 
-        // QUEUE FAR AWAY CHUNKS FOR RECYCLING
+        #region RELEASE UNUSED CHUNKS TO ENTITY MANAGER
+        List<Vector3Int> removes = new List<Vector3Int>();
         foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkList)
-            if (Mathf.Abs((position - pair.Value.position).sqrMagnitude) > (RenderDistance + 1) * (RenderDistance + 1))
-                RecycledChunkList.Enqueue(pair.Value);
-
-        foreach (Chunk chunk in RecycledChunkList)
-        {
-            if (chunk.gameObject.activeSelf)
+            if (!UpdateList.Contains(pair.Key))
             {
-                chunk.Deactivate();
-                ChunkList.Remove(chunk.position);
-                chunk.position = Vector3Int.zero;
-                chunk.transform.position = Vector3.zero;
+                EntityManager.Instance.Release("chunk", pair.Value.gameObject);
+                removes.Add(pair.Key);
             }
-        }
+        foreach (Vector3Int p in removes) ChunkList.Remove(p);
+        #endregion
 
-        // ADD / DEQUEUE NEW CHUNKS FROM UPDATE LIST
+
+        #region RETRIEVE NEW CHUNKS FROM ENTITY MANAGER
         for (int i = 0; i < UpdateList.Count; i++)
         {
             if (!ChunkList.ContainsKey(UpdateList[i]))
@@ -120,27 +116,25 @@ public class ChunkManager : MonoBehaviour
                 if (UpdateList[i].x < 0) newPos.x -= 0f;
                 if (UpdateList[i].y < 0) newPos.y -= 0f;
                 if (UpdateList[i].z < 0) newPos.z -= 0f;
-                if (RecycledChunkList.Count > 0)
+
+                GameObject c_go = EntityManager.Instance.Retrieve("chunk");
+                if (c_go != null)
                 {
-                    ChunkList.Add(UpdateList[i], RecycledChunkList.Dequeue());
+                    Chunk c = c_go.GetComponent<Chunk>();
+                    ChunkList.Add(UpdateList[i], c);
                     // TODO: Chunk Saving and Loading
                     // ChunkLoader.SaveChunk(ChunkList[UpdateList[i]]);
                     ChunkList[UpdateList[i]].transform.position = newPos;
-                    ChunkList[UpdateList[i]].gameObject.SetActive(true);
+                    // TODO: Chunk Saving and Loading
+                    if (ChunkLoader.ChunkExists(UpdateList[i]))
+                        ChunkList[UpdateList[i]].Init(ChunkLoader.LoadChunk(UpdateList[i]));
+                    else
+                        ChunkList[UpdateList[i]].Init(UpdateList[i]);
                 }
-                else
-                {
-                    GameObject chunkObject = Instantiate(ChunkObject, newPos, Quaternion.identity, transform);
-                    ChunkList.Add(UpdateList[i], chunkObject.GetComponent<Chunk>());
-                }
-                // TODO: Chunk Saving and Loading
-                if (ChunkLoader.ChunkExists(UpdateList[i]))
-                    ChunkList[UpdateList[i]].Init(ChunkLoader.LoadChunk(UpdateList[i]));
-                else
-                    ChunkList[UpdateList[i]].Init(UpdateList[i]);
             }
         }
         UpdateList.Clear();
+        #endregion
     }
 
     public void RequestChipnit(Chunk c)

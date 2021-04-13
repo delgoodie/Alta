@@ -1,5 +1,6 @@
 using UnityEngine;
 interface IEntity
 {
-    bool TestSite(Ray site);
+    void Activate();
+    void Deactivate();
 }
