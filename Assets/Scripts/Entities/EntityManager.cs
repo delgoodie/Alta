@@ -27,7 +27,7 @@ class EntityManager : MonoBehaviour
             for (int j = 0; j < counts[i]; j++)
             {
                 GameObject e = Instantiate(prefabs[i], Vector3.zero, Quaternion.identity, pool_t.transform);
-                e.GetComponent<IEntity>().Deactivate();
+                e.SetActive(false);
                 temp.Enqueue(e);
             }
             pools.Add(keys[i], temp);
@@ -38,7 +38,7 @@ class EntityManager : MonoBehaviour
     {
         if (pools[key].Count > 0)
         {
-            pools[key].Peek().GetComponent<IEntity>().Activate();
+            pools[key].Peek().SetActive(true);
             return pools[key].Dequeue();
         }
         else return null;
@@ -46,7 +46,7 @@ class EntityManager : MonoBehaviour
 
     public void Release(string key, GameObject entity)
     {
-        entity.GetComponent<IEntity>().Deactivate();
+        entity.SetActive(false);
         pools[key].Enqueue(entity);
     }
 }

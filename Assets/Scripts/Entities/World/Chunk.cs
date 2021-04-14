@@ -12,6 +12,7 @@ public class Chunk : MonoBehaviour, IMarch, IEntity
     private ComputeBuffer chipsBuffer;
     private int MarkupKernel;
     private Mesh mesh;
+    private ChunkPlantManager chunkPlantManager;
 
     private void OnDrawGizmos()
     {
@@ -27,6 +28,7 @@ public class Chunk : MonoBehaviour, IMarch, IEntity
     {
         marcher = GetComponent<Marcher>();
         mesh = GetComponent<MeshFilter>().mesh;
+        chunkPlantManager = GetComponent<ChunkPlantManager>();
         MarkupShader = Resources.Load("Compute Shaders/ChipMarkup") as ComputeShader;
         MarkupKernel = MarkupShader.FindKernel("ChipMarkup");
     }
@@ -63,15 +65,11 @@ public class Chunk : MonoBehaviour, IMarch, IEntity
 
     public void MarchUpdate()
     {
+        chunkPlantManager.CreatePlants();
     }
 
-    public void Deactivate()
+    private void OnDisable()
     {
-        gameObject.SetActive(false);
-    }
-
-    public void Activate()
-    {
-        gameObject.SetActive(true);
+        chunkPlantManager.ReleasePlants();
     }
 }

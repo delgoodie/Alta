@@ -14,8 +14,10 @@ GameObject:
   - component: {fileID: 5894601676540839937}
   - component: {fileID: 3046772635400844162}
   - component: {fileID: 2877757276415809875}
+  - component: {fileID: -1934961050161422577}
+  - component: {fileID: 2080824054668787391}
   m_Layer: 0
-  m_Name: ChunkObject
+  m_Name: Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   marcher: {fileID: 0}
   position: {x: 0, y: 0, z: 0}
-  plants: []
+  center: {x: 0, y: 0, z: 0}
 --- !u!33 &5894601676540839936
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -134,3 +136,29 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   mesh: {fileID: 0}
   meshCollider: {fileID: 0}
+--- !u!114 &-1934961050161422577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5894601676540839948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9da60d9e5be0338499b362f505fe9b99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  count: 30
+--- !u!114 &2080824054668787391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5894601676540839948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3991b52aad99d9949a7dac9b41ff1628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  count: 10
