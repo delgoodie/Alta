@@ -12,8 +12,8 @@ public class Fish : MonoBehaviour, ICreature
     {
         Vector3Int chunk_pos = new Vector3Int((int)(transform.position.x / 16f), (int)(transform.position.y / 16f), (int)(transform.position.z / 16f));
         List<GameObject> neighbors = new List<GameObject>();
-        foreach (KeyValuePair<Vector3Int, Chunk> c in ChunkManager.Instance.ChunkList)
-            neighbors.AddRange(c.Value.creatures);
+        // foreach (KeyValuePair<Vector3Int, Chunk> c in ChunkManager.Instance.ChunkDict)
+        //     neighbors.AddRange(c.Value.creatures);
         if (neighbors == null) return;
         Vector3 seperation = Vector3.zero;
         Vector3 cohesion = Vector3.zero;

@@ -558,7 +558,7 @@ void Noise3D (uint3 id : SV_DispatchThreadID)
     // s += .1 * snoise(float3(world.x * .006, 1, world.x * .006));
 
     if(world.y > ceiling) chips[index] = iso(chips[index], 0);
-    else if(world.y < floor) chips[index] = iso(chips[index], 256);
+    else if(world.y < floor) chips[index] = iso(chips[index], 255);
     else chips[index] = iso(chips[index], normalToByte(isoValue));
     
     

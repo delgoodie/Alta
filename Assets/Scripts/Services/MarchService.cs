@@ -1,14 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MarchManager : MonoBehaviour
+public class MarchService : MonoBehaviour, IService
 {
-    [HideInInspector]
-    public bool noMarch;
-    [HideInInspector]
-    public static MarchManager Instance;
-    public bool gizmosEnabled;
-    private Queue<Marcher> MarchQueue;
     private ComputeShader Shader, CombineShader;
     private int Kernel;
     private int CombineKernel;
@@ -25,38 +19,16 @@ public class MarchManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        MarchQueue = new Queue<Marcher>();
         Shader = Resources.Load("Compute Shaders/March") as ComputeShader;
         Kernel = Shader.FindKernel("March");
         CombineShader = Resources.Load("Compute Shaders/CombineVerticies") as ComputeShader;
         CombineKernel = CombineShader.FindKernel("CombineVerticies");
-        noMarch = false;
     }
 
-    private void Update()
+    public void Execute(GameObject gameObject)
     {
-        if (MarchQueue.Count > 0)
-        {
-            noMarch = false;
-            March(MarchQueue.Dequeue());
-        }
-        else noMarch = true;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-            foreach (Marcher m in MarchQueue) Gizmos.DrawWireCube(m.transform.position + Vector3.one * 7.5f, Vector3.one * 15f);
-    }
-
-    public void RequestMarch(Marcher m)
-    {
-        if (!MarchQueue.Contains(m)) MarchQueue.Enqueue(m);
-    }
-
-    public void March(Marcher m)
-    {
+        Marcher m = gameObject.GetComponent<Marcher>();
+        if (m == null) return;
         if (m.closed)
         {
             mChips = new int[(m.size + 2) * (m.size + 2) * (m.size + 2)];
@@ -97,8 +69,7 @@ public class MarchManager : MonoBehaviour
         //Shader RUN
         Shader.Dispatch(Kernel, m.size + (m.closed ? 2 : 0), m.size + (m.closed ? 2 : 0), m.size + (m.closed ? 2 : 0));
 
-        //Shader GET
-        #region
+        #region Shader GET
         ComputeBuffer.CopyCount(triangleBuffer, triCountBuffer, 0);
         triCount = new int[1] { 0 };
         triCountBuffer.GetData(triCount);
@@ -136,8 +107,6 @@ public class MarchManager : MonoBehaviour
         }
         #endregion
 
-        m.mesh.Clear();
-
         if (verticies.Length > 0)
         {
             m.mesh.Clear();
@@ -151,10 +120,11 @@ public class MarchManager : MonoBehaviour
             // TODO: Generate vertex sharing during march and correct normals
             m.mesh.RecalculateBounds();
             m.mesh.MarkModified();
-            if (triangles.Length > 10 * 3) m.meshCollider.sharedMesh = m.mesh;
-
+            // if (triangles.Length > 10 * 3) m.meshCollider.sharedMesh = m.mesh;
             m.updated = true;
         }
+        m.meshCollider.sharedMesh = m.mesh;
+
     }
 
     private void CombineVerticies()

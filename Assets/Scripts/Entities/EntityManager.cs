@@ -36,8 +36,12 @@ class EntityManager : MonoBehaviour
 
     public GameObject Retrieve(string key)
     {
-        pools[key].Peek().GetComponent<IEntity>().Activate();
-        return pools[key].Dequeue();
+        if (pools[key].Count > 0)
+        {
+            pools[key].Peek().GetComponent<IEntity>().Activate();
+            return pools[key].Dequeue();
+        }
+        else return null;
     }
 
     public void Release(string key, GameObject entity)

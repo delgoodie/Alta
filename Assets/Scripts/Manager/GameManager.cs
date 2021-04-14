@@ -46,22 +46,21 @@ class GameManager : MonoBehaviour
     {
         ChunkManager.Instance.ChunkUpdate(Vector3Int.zero);
     }
+
     private void Update()
     {
         TickHandler();
         if (PlayerManager.Instance.activePlayer)
         {
-            Vector3 playerPosition = PlayerManager.Instance.PlayerPosition();
-            Vector3Int playerChunk = new Vector3Int((int)(playerPosition.x * 0.0625f), (int)(playerPosition.y * 0.0625f), (int)(playerPosition.z * 0.0625f));
-            if (!previousPlayerChunk.Equals(playerChunk))
+            if (!previousPlayerChunk.Equals(PlayerManager.Instance.PlayerChunkPosition()))
             {
-                ChunkManager.Instance.ChunkUpdate(playerChunk);
-                previousPlayerChunk = playerChunk;
+                ChunkManager.Instance.ChunkUpdate(PlayerManager.Instance.PlayerChunkPosition());
+                previousPlayerChunk = PlayerManager.Instance.PlayerChunkPosition();
             }
         }
         else
         {
-            if (spawnPlayer && MarchManager.Instance.noMarch) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
+            if (spawnPlayer && !ServiceScheduler.Instance.servicing) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
         }
 
     }
@@ -117,7 +116,6 @@ class GameManager : MonoBehaviour
         }
     }
 }
-
 
 struct GameStartData
 {

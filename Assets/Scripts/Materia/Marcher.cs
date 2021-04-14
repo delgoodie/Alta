@@ -40,17 +40,6 @@ public class Marcher : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (MarchManager.Instance.gizmosEnabled)
-        {
-            for (int x = 0; x < size; x++)
-                for (int y = 0; y < size; y++)
-                    for (int z = 0; z < size; z++)
-                    {
-                        float iso = (float)chips[x * size * size + y * size + z].iso;
-                        Gizmos.color = new Color(iso > 128 ? 0f : 1f, iso > 128 ? 0f : 1f, iso > 128 ? 0f : 1f, iso / 255f);
-                        Gizmos.DrawCube(PosToWorld(new Vector3Int(x, y, z)), Vector3.one * scale);
-                    }
-        }
     }
 
     public void Init()
@@ -61,7 +50,8 @@ public class Marcher : MonoBehaviour
 
     public void March()
     {
-        MarchManager.Instance.RequestMarch(this);
+        mesh.Clear();
+        ServiceScheduler.Instance.Request("march", gameObject);
     }
 
     public void Add(Vector3 center, float radius, float power)

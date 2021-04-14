@@ -4,46 +4,39 @@ using UnityEngine;
 public class ChunkManager : MonoBehaviour
 {
     #region PUBLIC
-    [Header("Manager")]
     public int RenderDistance;
-    [Header("Chunk")]
     public int Size;
     public bool RunChunkUpdate;
-
-    [Header("Noise")]
-    public Vector3Int Offset;
-    public float TypeNoise;
-    public Vector4[] NoiseOctaves;
-    public int Ceiling;
-    public int Floor;
+    public bool EnableGizmos;
 
     [HideInInspector]
     public static ChunkManager Instance;
-    [HideInInspector]
-    public bool noMarch;
     #endregion
     #region PRIVATE
-    public Dictionary<Vector3Int, Chunk> ChunkList;
+    private Dictionary<Vector3Int, Chunk> ChunkDict;
     //TODO: Make update list static and just use offsets to find update coords
     private List<Vector3Int> UpdateList;
-    private Queue<Chunk> ChipnitQueue;
-    private ComputeShader NoiseShader;
-    private int NoiseKernel;
-    private ComputeBuffer ChipsBuffer, OctaveBuffer;
-    private int[] mChips;
     #endregion
 
     private void Awake()
     {
         Instance = this;
         //TODO: Calculate fixed capacity from render distance
+        ChunkDict = new Dictionary<Vector3Int, Chunk>();
+
         UpdateList = new List<Vector3Int>();
-        ChunkList = new Dictionary<Vector3Int, Chunk>();
-        ChipnitQueue = new Queue<Chunk>();
-        mChips = new int[Size * Size * Size];
-        for (int i = 0; i < mChips.Length; i++) mChips[i] = 0;
-        NoiseShader = Resources.Load("Compute Shaders/Noise3D") as ComputeShader;
-        NoiseKernel = NoiseShader.FindKernel("Noise3D");
+        for (int y = -RenderDistance / 2; y <= RenderDistance / 2; y++)
+        {
+            for (int x = 0 - RenderDistance; x <= RenderDistance; x++)
+                UpdateList.Add(new Vector3Int(x, y, 0));
+
+            for (int i = RenderDistance; i > 0; i--)
+                for (int x = -i + 1; x <= i - 1; x++)
+                {
+                    UpdateList.Add(new Vector3Int(x, y, RenderDistance - i + 1));
+                    UpdateList.Add(new Vector3Int(x, y, -RenderDistance + i - 1));
+                }
+        }
     }
 
     private void Update()
@@ -58,143 +51,68 @@ public class ChunkManager : MonoBehaviour
         //         chunkEntry.Value.marcher.March();
         //     }
         // }
-
-        if (ChipnitQueue.Count > 0)
-        {
-            noMarch = false;
-            Chipnit(ChipnitQueue.Dequeue());
-        }
-        else noMarch = true;
-
     }
 
     public Chunk GetChunk(Vector3Int position)
     {
-        if (ChunkList.ContainsKey(position))
-            return ChunkList[position];
+        if (ChunkDict.ContainsKey(position))
+            return ChunkDict[position];
         else return null;
     }
 
     public void ChunkUpdate(Vector3Int position)
     {
-
-        #region POPULATE UPDATE LIST FROM POSITION AND RENDER DISTANCE
-        UpdateList.Clear();
-        for (int y = position.y - RenderDistance / 2 - 1; y < position.y + RenderDistance / 2; y++)
-        {
-            for (int x = position.x - RenderDistance; x <= position.x + RenderDistance; x++)
-                UpdateList.Add(new Vector3Int(x, y, position.z));
-
-            for (int i = RenderDistance; i > 0; i--)
-                for (int x = position.x - (i - 1); x <= position.x + (i - 1); x++)
-                {
-                    UpdateList.Add(new Vector3Int(x, y, position.z + (RenderDistance - i + 1)));
-                    UpdateList.Add(new Vector3Int(x, y, position.z - (RenderDistance - i + 1)));
-                }
-        }
-        #endregion
-
-
         #region RELEASE UNUSED CHUNKS TO ENTITY MANAGER
         List<Vector3Int> removes = new List<Vector3Int>();
-        foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkList)
-            if (!UpdateList.Contains(pair.Key))
+        foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkDict)
+        {
+            bool keep = false;
+            for (int i = 0; i < UpdateList.Count; i++)
+                if (pair.Key.Equals(position + UpdateList[i])) keep = true;
+            if (!keep)
             {
                 EntityManager.Instance.Release("chunk", pair.Value.gameObject);
                 removes.Add(pair.Key);
             }
-        foreach (Vector3Int p in removes) ChunkList.Remove(p);
+        }
+        foreach (Vector3Int p in removes) ChunkDict.Remove(p);
         #endregion
 
 
         #region RETRIEVE NEW CHUNKS FROM ENTITY MANAGER
         for (int i = 0; i < UpdateList.Count; i++)
         {
-            if (!ChunkList.ContainsKey(UpdateList[i]))
+            Vector3Int c_pos = UpdateList[i] + position;
+            Vector3 w_pos = c_pos * (Size - 1);
+            if (!ChunkDict.ContainsKey(c_pos))
             {
-                Vector3 newPos = UpdateList[i] * (Size - 1);
-                if (UpdateList[i].x < 0) newPos.x -= 0f;
-                if (UpdateList[i].y < 0) newPos.y -= 0f;
-                if (UpdateList[i].z < 0) newPos.z -= 0f;
-
                 GameObject c_go = EntityManager.Instance.Retrieve("chunk");
                 if (c_go != null)
                 {
                     Chunk c = c_go.GetComponent<Chunk>();
-                    ChunkList.Add(UpdateList[i], c);
+                    ChunkDict.Add(c_pos, c);
                     // TODO: Chunk Saving and Loading
                     // ChunkLoader.SaveChunk(ChunkList[UpdateList[i]]);
-                    ChunkList[UpdateList[i]].transform.position = newPos;
+                    ChunkDict[c_pos].transform.position = w_pos;
                     // TODO: Chunk Saving and Loading
-                    if (ChunkLoader.ChunkExists(UpdateList[i]))
-                        ChunkList[UpdateList[i]].Init(ChunkLoader.LoadChunk(UpdateList[i]));
+                    if (ChunkLoader.ChunkExists(c_pos))
+                        ChunkDict[c_pos].Init(ChunkLoader.LoadChunk(c_pos));
                     else
-                        ChunkList[UpdateList[i]].Init(UpdateList[i]);
+                        ChunkDict[c_pos].Init(c_pos);
+                }
+                else
+                {
+                    Debug.Log("No Chunk Available");
                 }
             }
         }
-        UpdateList.Clear();
         #endregion
-    }
-
-    public void RequestChipnit(Chunk c)
-    {
-        if (!ChipnitQueue.Contains(c)) ChipnitQueue.Enqueue(c);
-    }
-
-    private void Chipnit(Chunk chunk)
-    {
-        ChipsBuffer = new ComputeBuffer(Size * Size * Size, sizeof(int));
-
-        ChipsBuffer.SetData(mChips);
-        NoiseShader.SetBuffer(NoiseKernel, "chips", ChipsBuffer);
-
-        OctaveBuffer = new ComputeBuffer(NoiseOctaves.Length, sizeof(float) * 4);
-
-        OctaveBuffer.SetData(NoiseOctaves);
-        NoiseShader.SetBuffer(NoiseKernel, "octaves", OctaveBuffer);
-
-        NoiseShader.SetInt("size", Size);
-        NoiseShader.SetInt("X", chunk.position.x);
-        NoiseShader.SetInt("Y", chunk.position.y);
-        NoiseShader.SetInt("Z", chunk.position.z);
-
-        NoiseShader.SetInt("offX", Offset.x);
-        NoiseShader.SetInt("offY", Offset.y);
-        NoiseShader.SetInt("offZ", Offset.z);
-
-        NoiseShader.SetInt("minType", 1);
-        NoiseShader.SetInt("maxType", 23);
-        NoiseShader.SetInt("emptyType", 0);
-
-        NoiseShader.SetInt("ceiling", Ceiling);
-        NoiseShader.SetInt("floor", Floor);
-
-        NoiseShader.SetFloat("typeN", TypeNoise);
-        NoiseShader.SetInt("noctaves", NoiseOctaves.Length);
-
-        NoiseShader.Dispatch(NoiseKernel, Size, Size, Size);
-
-        ChipsBuffer.GetData(mChips);
-
-        ChipsBuffer.Dispose();
-        OctaveBuffer.Dispose();
-
-        Chip[] chips = new Chip[Size * Size * Size];
-        for (int i = 0; i < mChips.Length; i++)
-        {
-            chips[i].iso = (byte)((mChips[i] >> 24) & 0xff);
-            chips[i].type = (byte)((mChips[i] >> 16) & 0xff);
-            chips[i].data = (ushort)(mChips[i] & 0xffff);
-        }
-        chunk.marcher.chips = chips;
-        chunk.ChipUpdate();
     }
 
     public Chip WorldToChip(Vector3 world)
     {
         Vector3Int pos = new Vector3Int(Mathf.RoundToInt(world.x) / (Size - 1) - (world.x < 0 ? 1 : 0), Mathf.RoundToInt(world.y) / (Size - 1) - (world.y < 0 ? 1 : 0), Mathf.RoundToInt(world.z) / (Size - 1) - (world.z < 0 ? 1 : 0));
-        if (ChunkList.ContainsKey(pos)) return ChunkList[pos].marcher.WorldToChip(world);
+        if (ChunkDict.ContainsKey(pos)) return ChunkDict[pos].marcher.WorldToChip(world);
         else
         {
             Debug.Log("No chunk at coords");
@@ -204,7 +122,7 @@ public class ChunkManager : MonoBehaviour
 
     public void SaveMemory()
     {
-        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList) ChunkLoader.SaveChunk(chunkEntry.Value);
+        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkDict) ChunkLoader.SaveChunk(chunkEntry.Value);
         Debug.Log("Saved");
     }
 
@@ -216,7 +134,7 @@ public class ChunkManager : MonoBehaviour
 
     public void Add(Vector3 p, float r, float power)
     {
-        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
+        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkDict)
         {
             if ((chunkEntry.Value.center - p).sqrMagnitude < 24f * 24f + r * r)
                 chunkEntry.Value.marcher.Add(p, r, power);
@@ -225,7 +143,7 @@ public class ChunkManager : MonoBehaviour
 
     public void Subtract(Vector3 p, float r, float power)
     {
-        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkList)
+        foreach (KeyValuePair<Vector3Int, Chunk> chunkEntry in ChunkDict)
         {
             if ((chunkEntry.Value.center - p).sqrMagnitude < 24f * 24f + r * r)
                 chunkEntry.Value.marcher.Subtract(p, r, power);
@@ -249,7 +167,7 @@ public class ChunkManager : MonoBehaviour
         int mkDist = 6;
         for (int x = 0; x < Size; x++) for (int y = 0; y < Size; y++) for (int z = 0; z < Size; z++)
                 {
-                    if (ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type == 0)
+                    if (ChunkDict[p].marcher.chips[x * Size * Size + y * Size + z].type == 0)
                     {
                         Vector3Int center = p * Size + new Vector3Int(x, y, z);
                         bool grey = false;
@@ -261,7 +179,7 @@ public class ChunkManager : MonoBehaviour
                                 }
                         if (grey)
                         {
-                            ChunkList[p].marcher.chips[x * Size * Size + y * Size + z].type = 0;
+                            ChunkDict[p].marcher.chips[x * Size * Size + y * Size + z].type = 0;
                         }
                     }
                 }

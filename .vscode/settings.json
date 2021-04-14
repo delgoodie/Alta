@@ -17,6 +17,15 @@
         "Assembly-CSharp.csproj": true,
         "README.md": true,
         "Assets/Scenes/": true,
+        "Assets/Fbx/": true,
+        "Assets/HDRPDefaultResources/": true,
+        "Assets/Presets/": true,
+        "Assets/Materials/": true,
+        "LocalPackages/": true,
+        "Assets/Textures/": true,
+        "Assets/Shaders/": true,
+        "Assets/Settings/": true,
+        "Assets/Resources/BillingMode.json": true,
         "Assets/Resources/Prefabs/": true,
     }
 }
