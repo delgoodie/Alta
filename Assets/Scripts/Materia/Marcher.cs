@@ -59,8 +59,8 @@ public class Marcher : MonoBehaviour
         bool modified = false;
         for (int i = 0; i < chips.Length; i++)
         {
-            Vector3 pos = PosToWorld(IndexToPos(i));
-            if ((center - pos).sqrMagnitude < radius * radius)
+            Vector3 world = LocalToWorld(IndexToLocal(i));
+            if ((center - world).sqrMagnitude < radius * radius)
             {
                 chips[i].iso = (byte)Mathf.Clamp(chips[i].iso + Mathf.CeilToInt(power * Time.deltaTime), 0, 0xff);
                 modified = true;
@@ -74,8 +74,8 @@ public class Marcher : MonoBehaviour
         bool modified = false;
         for (int i = 0; i < chips.Length; i++)
         {
-            Vector3 pos = PosToWorld(IndexToPos(i));
-            if ((center - pos).sqrMagnitude < radius * radius)
+            Vector3 world = LocalToWorld(IndexToLocal(i));
+            if ((center - world).sqrMagnitude < radius * radius)
             {
                 chips[i].iso = (byte)Mathf.Clamp(chips[i].iso - Mathf.CeilToInt(power * Time.deltaTime), 0, 0xff);
                 modified = true;
@@ -84,18 +84,18 @@ public class Marcher : MonoBehaviour
         if (modified) March();
     }
 
-    public Vector3Int IndexToPos(int i)
+    public Vector3Int IndexToLocal(int i)
     {
         int s1 = i / size;
         int s2 = s1 / size;
-        Vector3Int pos = new Vector3Int(s2, s1 % size, 0);
-        pos.z = i - pos.x * size * size - pos.y * size;
-        return pos;
+        Vector3Int local = new Vector3Int(s2, s1 % size, 0);
+        local.z = i - local.x * size * size - local.y * size;
+        return local;
     }
 
-    public Vector3 PosToWorld(Vector3Int pos)
+    public Vector3 LocalToWorld(Vector3Int local)
     {
-        return transform.TransformPoint(new Vector3(pos.x, pos.y, pos.z) * scale + offset);
+        return transform.TransformPoint(new Vector3(local.x, local.y, local.z) * scale + offset);
     }
 
     public int WorldToIndex(Vector3 world)

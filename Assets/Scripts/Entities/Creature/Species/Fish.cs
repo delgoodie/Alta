@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 public class Fish : MonoBehaviour, ICreature
 {
-    new private Rigidbody rigidbody;
+    public Vector3Int coordinate { get; set; }
+
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
     }
+
     private void Update()
     {
-        Vector3Int chunk_pos = new Vector3Int((int)(transform.position.x / 16f), (int)(transform.position.y / 16f), (int)(transform.position.z / 16f));
+        Vector3Int coord = ChunkManager.Instance.WorldToCoord(transform.position);
         List<GameObject> neighbors = new List<GameObject>();
         // foreach (KeyValuePair<Vector3Int, Chunk> c in ChunkManager.Instance.ChunkDict)
         //     neighbors.AddRange(c.Value.creatures);
@@ -40,8 +41,8 @@ public class Fish : MonoBehaviour, ICreature
         {
             direction.Normalize();
             Quaternion targetRot = Quaternion.LookRotation(direction, Vector3.Cross(direction, transform.right));
-            rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, targetRot, .3f));
-            rigidbody.AddForce(transform.forward * Time.deltaTime * 200f);
+            // rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, targetRot, .3f));
+            // rigidbody.AddForce(transform.forward * Time.deltaTime * 200f);
         }
     }
 }

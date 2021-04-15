@@ -15,7 +15,7 @@ public class ChunkManager : MonoBehaviour
     #region PRIVATE
     private Dictionary<Vector3Int, Chunk> ChunkDict;
     //TODO: Make update list static and just use offsets to find update coords
-    private List<Vector3Int> UpdateList;
+    private Vector3Int[] UpdateMap;
     #endregion
 
     private void Awake()
@@ -24,19 +24,16 @@ public class ChunkManager : MonoBehaviour
         //TODO: Calculate fixed capacity from render distance
         ChunkDict = new Dictionary<Vector3Int, Chunk>();
 
-        UpdateList = new List<Vector3Int>();
-        for (int y = -RenderDistance / 2; y <= RenderDistance / 2; y++)
-        {
-            for (int x = 0 - RenderDistance; x <= RenderDistance; x++)
-                UpdateList.Add(new Vector3Int(x, y, 0));
-
-            for (int i = RenderDistance; i > 0; i--)
-                for (int x = -i + 1; x <= i - 1; x++)
+        List<Vector3Int> UpdateList = new List<Vector3Int>();
+        for (int x = -RenderDistance; x <= RenderDistance; x++)
+            for (int y = -RenderDistance; y <= RenderDistance; y++)
+                for (int z = -RenderDistance; z <= RenderDistance; z++)
                 {
-                    UpdateList.Add(new Vector3Int(x, y, RenderDistance - i + 1));
-                    UpdateList.Add(new Vector3Int(x, y, -RenderDistance + i - 1));
+                    Vector3Int point = new Vector3Int(x, y, z);
+                    if (point.sqrMagnitude <= RenderDistance) UpdateList.Add(point);
                 }
-        }
+        UpdateMap = new Vector3Int[UpdateList.Count];
+        for (int i = 0; i < UpdateList.Count; i++) UpdateMap[i] = UpdateList[i];
     }
 
     private void Update()
@@ -53,22 +50,31 @@ public class ChunkManager : MonoBehaviour
         // }
     }
 
-    public Chunk GetChunk(Vector3Int position)
+    public Chunk GetChunk(Vector3Int coordinate)
     {
-        if (ChunkDict.ContainsKey(position))
-            return ChunkDict[position];
+        if (ChunkDict.ContainsKey(coordinate))
+            return ChunkDict[coordinate];
         else return null;
     }
 
-    public void ChunkUpdate(Vector3Int position)
+    public Vector3Int WorldToCoord(Vector3 world)
+    {
+        if (world.x < 0) world.x -= Size - 1;
+        if (world.y < 0) world.y -= Size - 1;
+        if (world.z < 0) world.z -= Size - 1;
+
+        return new Vector3Int((int)(world.x / (Size - 1)), (int)(world.y / (Size - 1)), (int)(world.z / (Size - 1)));
+    }
+
+    public void ChunkUpdate(Vector3Int coordinate)
     {
         #region RELEASE UNUSED CHUNKS TO ENTITY MANAGER
         List<Vector3Int> removes = new List<Vector3Int>();
         foreach (KeyValuePair<Vector3Int, Chunk> pair in ChunkDict)
         {
             bool keep = false;
-            for (int i = 0; i < UpdateList.Count; i++)
-                if (pair.Key.Equals(position + UpdateList[i])) keep = true;
+            for (int i = 0; i < UpdateMap.Length; i++)
+                if (pair.Key.Equals(coordinate + UpdateMap[i])) keep = true;
             if (!keep)
             {
                 EntityManager.Instance.Release("chunk", pair.Value.gameObject);
@@ -80,9 +86,9 @@ public class ChunkManager : MonoBehaviour
 
 
         #region RETRIEVE NEW CHUNKS FROM ENTITY MANAGER
-        for (int i = 0; i < UpdateList.Count; i++)
+        for (int i = 0; i < UpdateMap.Length; i++)
         {
-            Vector3Int c_pos = UpdateList[i] + position;
+            Vector3Int c_pos = UpdateMap[i] + coordinate;
             Vector3 w_pos = c_pos * (Size - 1);
             if (!ChunkDict.ContainsKey(c_pos))
             {
@@ -111,8 +117,8 @@ public class ChunkManager : MonoBehaviour
 
     public Chip WorldToChip(Vector3 world)
     {
-        Vector3Int pos = new Vector3Int(Mathf.RoundToInt(world.x) / (Size - 1) - (world.x < 0 ? 1 : 0), Mathf.RoundToInt(world.y) / (Size - 1) - (world.y < 0 ? 1 : 0), Mathf.RoundToInt(world.z) / (Size - 1) - (world.z < 0 ? 1 : 0));
-        if (ChunkDict.ContainsKey(pos)) return ChunkDict[pos].marcher.WorldToChip(world);
+        Vector3Int coord = WorldToCoord(world);
+        if (ChunkDict.ContainsKey(coord)) return ChunkDict[coord].marcher.WorldToChip(world);
         else
         {
             Debug.Log("No chunk at coords");
@@ -185,20 +191,20 @@ public class ChunkManager : MonoBehaviour
                 }
     }
 
-    public bool BoxCheck(Vector3 pos, Vector3 size)
+    public bool BoxCheck(Vector3 world, Vector3 size)
     {
         bool passed = true;
         for (int x = 0; x < size.x; x++) for (int y = 0; y < size.y; y++) for (int z = 0; z < size.z; z++)
-                    if (Chips.Opaque[WorldToChip(new Vector3(pos.x + (float)x - size.x * .5f - .5f, pos.y + (float)y - size.y * .5f - .5f, pos.z + (float)z - size.z * .5f - .5f)).type]) passed = false;
+                    if (Chips.Opaque[WorldToChip(new Vector3(world.x + (float)x - size.x * .5f - .5f, world.y + (float)y - size.y * .5f - .5f, world.z + (float)z - size.z * .5f - .5f)).type]) passed = false;
         return passed;
     }
 
-    public bool BoxCheck(Vector3 pos, Quaternion rot, Vector3 size)
+    public bool BoxCheck(Vector3 world, Quaternion rot, Vector3 size)
     {
         bool passed = true;
         transform.rotation = rot;
         for (int x = 0; x < size.x; x++) for (int y = 0; y < size.y; y++) for (int z = 0; z < size.z; z++)
-                    if (Chips.Opaque[WorldToChip(pos + transform.TransformVector(new Vector3(x - (float)size.x * .5f - .5f, (float)y - size.y * .5f - .5f, (float)z - size.z * .5f - .5f))).type]) passed = false;
+                    if (Chips.Opaque[WorldToChip(world + transform.TransformVector(new Vector3(x - (float)size.x * .5f - .5f, (float)y - size.y * .5f - .5f, (float)z - size.z * .5f - .5f))).type]) passed = false;
         transform.rotation = Quaternion.identity;
         return passed;
     }

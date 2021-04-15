@@ -8,7 +8,7 @@ public static class ChunkLoader
     {
         return;
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/c" + chunk.position.x + "_" + chunk.position.y + "_" + chunk.position.z + ".chnk";
+        string path = Application.persistentDataPath + "/c" + chunk.coordinate.x + "_" + chunk.coordinate.y + "_" + chunk.coordinate.z + ".chnk";
         FileStream stream = new FileStream(path, FileMode.Create);
         ChunkData data = new ChunkData(chunk);
         formatter.Serialize(stream, data);

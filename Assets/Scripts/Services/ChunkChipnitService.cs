@@ -36,9 +36,9 @@ public class ChunkChipnitService : MonoBehaviour, IService
         NoiseShader.SetBuffer(NoiseKernel, "octaves", OctaveBuffer);
 
         NoiseShader.SetInt("size", Size);
-        NoiseShader.SetInt("X", chunk.position.x);
-        NoiseShader.SetInt("Y", chunk.position.y);
-        NoiseShader.SetInt("Z", chunk.position.z);
+        NoiseShader.SetInt("X", chunk.coordinate.x);
+        NoiseShader.SetInt("Y", chunk.coordinate.y);
+        NoiseShader.SetInt("Z", chunk.coordinate.z);
 
         NoiseShader.SetInt("offX", Offset.x);
         NoiseShader.SetInt("offY", Offset.y);
