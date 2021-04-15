@@ -6,6 +6,13 @@ class CreatureManager : MonoBehaviour
     public int partitionSize;
     public int count;
     public float radius;
+    [Header("Swarm Parameters")]
+    public float swarmCohesion;
+    public float swarmAlignment;
+    public float swarmSeperation;
+    public float swarmAvoidance;
+    public float swarmCenter;
+
     [HideInInspector]
     public Dictionary<string, List<GameObject>> creatures;
     [HideInInspector]
@@ -42,6 +49,7 @@ class CreatureManager : MonoBehaviour
             Gizmos.DrawWireCube(pair.Key * partitionSize + Vector3.one * (partitionSize / 2f), Vector3.one * partitionSize * 0.95f);
         }
     }
+
     public void CreatureUpdate(Vector3 _target)
     {
         target = _target;
@@ -121,10 +129,14 @@ class CreatureManager : MonoBehaviour
             GameObject f = EntityManager.Instance.Retrieve("fish");
             if (f != null)
             {
-                float dist = Random.Range(.7f, 1f);
-                dist *= radius;
+                Vector3 pos;
+                do
+                {
+                    float dist = Random.Range(.7f, 1f);
+                    dist *= radius;
+                    pos = target + Random.rotation * Vector3.forward * dist;
+                } while (ChunkManager.Instance.WorldToChip(pos).iso < 128);
 
-                Vector3 pos = target + Random.rotation * Vector3.forward * dist;
                 Vector3Int coord = WorldToCoord(pos);
                 f.transform.position = pos;
                 f.transform.rotation = Random.rotation;

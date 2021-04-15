@@ -269,6 +269,11 @@ MonoBehaviour:
   partitionSize: 20
   count: 300
   radius: 30
+  swarmCohesion: 1
+  swarmAlignment: 0.3
+  swarmSeperation: 2
+  swarmAvoidance: 1
+  swarmCenter: 1
   target: {x: 0, y: 0, z: 0}
 --- !u!1 &379132857
 GameObject:

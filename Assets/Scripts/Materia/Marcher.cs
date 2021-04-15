@@ -108,10 +108,6 @@ public class Marcher : MonoBehaviour
     {
         int index = WorldToIndex(world);
         if (index > -1 && index < chips.Length) return chips[index];
-        else
-        {
-            Debug.Log("Invalid WS: " + world.x + ", " + world.y + ", " + world.z);
-            return new Chip(0x00, 0x00, 0x0000);
-        }
+        else return new Chip(0xff, 0, 0);
     }
 }

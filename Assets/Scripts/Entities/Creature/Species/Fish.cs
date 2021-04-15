@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public class Fish : MonoBehaviour, ICreature
 {
+    public float maxSpeed;
+    [HideInInspector]
+    public float speed;
     public Vector3Int coordinate { get; set; }
     public string type { get; } = "fish";
 
@@ -19,6 +22,8 @@ public class Fish : MonoBehaviour, ICreature
             Vector3 cohesion = Vector3.zero;
             Vector3 alignment = Vector3.zero;
             Vector3 seperation = Vector3.zero;
+            Vector3 avoidance = Vector3.zero;
+            Vector3 center = Vector3.zero;
 
             for (int i = 0; i < neighbors.Count; i++)
             {
@@ -30,22 +35,45 @@ public class Fish : MonoBehaviour, ICreature
                 seperation += dif.normalized * (Mathf.Pow(CreatureManager.Instance.partitionSize, 2) / dif.sqrMagnitude);
             }
 
+            Vector3[] dirs = new Vector3[5] {
+                transform.forward,
+                Vector3.Slerp(transform.forward, transform.up, .2f),
+                Vector3.Slerp(transform.forward, -transform.up, .2f),
+                Vector3.Slerp(transform.forward, transform.right, .2f),
+                Vector3.Slerp(transform.forward, -transform.right, .2f)
+            };
+
+
+            for (int i = 0; i < dirs.Length; i++)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, dirs[i], out hit, CreatureManager.Instance.partitionSize))
+                    avoidance += -dirs[i] * (CreatureManager.Instance.partitionSize / hit.distance);
+            }
+
+            center += (CreatureManager.Instance.target - transform.position).normalized;
+
             cohesion /= neighbors.Count;
             cohesion -= transform.position;
 
-            cohesion.Normalize();
-            alignment.Normalize();
-            seperation.Normalize();
 
-            Vector3 direction = (cohesion + alignment + seperation).normalized;
+            cohesion = cohesion.normalized * CreatureManager.Instance.swarmCohesion;
+            alignment = alignment.normalized * CreatureManager.Instance.swarmAlignment;
+            seperation *= CreatureManager.Instance.swarmSeperation * .001f;//.002f;
+            avoidance *= CreatureManager.Instance.swarmAvoidance * .01f;
+            center *= CreatureManager.Instance.swarmCenter;
+
+            Vector3 direction = (transform.forward + cohesion + alignment + seperation + avoidance + center).normalized;
+
+            speed = Mathf.Lerp(speed, Mathf.Max(0f, Vector3.Dot(direction, transform.forward) * maxSpeed), .1f);
+
+
 
             Quaternion targetRot = Quaternion.LookRotation(direction, Vector3.Cross(direction, transform.right));
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, .3f);
-            // rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, targetRot, .3f));
-            // rigidbody.AddForce(transform.forward * Time.deltaTime * 200f);
-        }
 
-        transform.Translate(Vector3.forward * Time.deltaTime * 3f, Space.Self);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, 3);
+        }
+        transform.Translate(Vector3.forward * Time.deltaTime * speed, Space.Self);
     }
 
     private void OnDrawGizmos()
