@@ -52,6 +52,11 @@ class GameManager : MonoBehaviour
         TickHandler();
         if (PlayerManager.Instance.activePlayer)
         {
+            if (tick3)
+            {
+                CreatureManager.Instance.CreatureUpdate(PlayerManager.Instance.PlayerPosition());
+            }
+
             if (!previousPlayerChunk.Equals(PlayerManager.Instance.PlayerChunkPosition()))
             {
                 ChunkManager.Instance.ChunkUpdate(PlayerManager.Instance.PlayerChunkPosition());

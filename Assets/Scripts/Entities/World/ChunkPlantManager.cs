@@ -37,7 +37,7 @@ public class ChunkPlantManager : MonoBehaviour
             {
                 Ray site = RandomSurfaceRay();
                 k.transform.position = site.origin - site.direction * .1f;
-                k.transform.rotation = Quaternion.LookRotation(Vector3.Cross(site.direction, Vector3.forward), site.direction);
+                k.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Random.rotation * Vector3.forward, site.direction), site.direction);
                 plants.Add(k);
             }
         }
