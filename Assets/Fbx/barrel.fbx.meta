@@ -1,14 +1,8 @@
 fileFormatVersion: 2
-guid: eaacb71d562621d4983345164200b268
+guid: a857dfdc4d4454f49acf9a3fa42d6750
 ModelImporter:
   serializedVersion: 21100
-  internalIDToNameTable:
-  - first:
-      74: -3999578356269874737
-    second: Cube|CubeAction
-  - first:
-      74: -7918129362319027497
-    second: Cube|CubeAction.001
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -42,7 +36,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 0
