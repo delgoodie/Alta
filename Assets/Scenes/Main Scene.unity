@@ -267,14 +267,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   partitionSize: 20
-  count: 300
+  count: 60
   radius: 30
-  swarmCohesion: 1
-  swarmAlignment: 0.3
+  swarmCohesion: 0.5
+  swarmAlignment: 0.1
   swarmSeperation: 2
   swarmAvoidance: 1
-  swarmCenter: 1
-  target: {x: 0, y: 0, z: 0}
+  swarmCenter: 0.4
+  target: {x: -56.804268, y: -30.586723, z: 19.38371}
 --- !u!1 &379132857
 GameObject:
   m_ObjectHideFlags: 0
