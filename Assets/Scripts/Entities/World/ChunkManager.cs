@@ -119,11 +119,7 @@ public class ChunkManager : MonoBehaviour
     {
         Vector3Int coord = WorldToCoord(world);
         if (ChunkDict.ContainsKey(coord)) return ChunkDict[coord].marcher.WorldToChip(world);
-        else
-        {
-            Debug.Log("No chunk at coords");
-            return new Chip(1, 0, 0);
-        }
+        else return new Chip(0xff, 0, 0);
     }
 
     public void SaveMemory()

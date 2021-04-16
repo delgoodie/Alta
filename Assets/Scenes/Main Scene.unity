@@ -266,9 +266,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db2302408fdbbd4884c617d9bb869ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  partitionSize: 15
-  partCount: 10
-  radius: 50
+  partitionSize: 20
+  count: 300
+  radius: 30
+  swarmCohesion: 1
+  swarmAlignment: 0.3
+  swarmSeperation: 2
+  swarmAvoidance: 1
+  swarmCenter: 1
   target: {x: 0, y: 0, z: 0}
 --- !u!1 &379132857
 GameObject:
@@ -359,10 +364,12 @@ MonoBehaviour:
   keys:
   - chunk
   - kelp
+  - fish
   prefabs:
   - {fileID: 5894601676540839948, guid: 86ceb81c0f8c5c740b9e6425b732fece, type: 3}
   - {fileID: 4148193714496408516, guid: 5dd34a22281fce7448573fc487dd2916, type: 3}
-  counts: f401000088130000
+  - {fileID: 3020370425042075687, guid: d1f919e5a9701574a9bb7be8f4d77b7d, type: 3}
+  counts: f401000088130000f4010000
 --- !u!1 &836707276
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,7 +733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPlayer: 1
-  tickSpan: 0
+  tickSpan: 4
   tick: 0
   tick1: 0
   tick2: 0
