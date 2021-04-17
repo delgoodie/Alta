@@ -77,7 +77,7 @@ public class ChunkManager : MonoBehaviour
                 if (pair.Key.Equals(coordinate + UpdateMap[i])) keep = true;
             if (!keep)
             {
-                EntityManager.Instance.Release("chunk", pair.Value.gameObject);
+                EntityManager.Instance.Release(pair.Value.gameObject);
                 removes.Add(pair.Key);
             }
         }

@@ -37,21 +37,21 @@ public class Fish : MonoBehaviour, ICreature
 
             Vector3[] dirs = new Vector3[5] {
                 transform.forward,
-                Vector3.Slerp(transform.forward, transform.up, .2f),
-                Vector3.Slerp(transform.forward, -transform.up, .2f),
-                Vector3.Slerp(transform.forward, transform.right, .2f),
-                Vector3.Slerp(transform.forward, -transform.right, .2f)
+                Vector3.Slerp(transform.forward, transform.up, .3f),
+                Vector3.Slerp(transform.forward, -transform.up, .3f),
+                Vector3.Slerp(transform.forward, transform.right, .3f),
+                Vector3.Slerp(transform.forward, -transform.right, .3f)
             };
 
 
             for (int i = 0; i < dirs.Length; i++)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, dirs[i], out hit, CreatureManager.Instance.partitionSize))
+                if (Physics.Raycast(transform.position, dirs[i], out hit, CreatureManager.Instance.partitionSize * .5f))
                     avoidance += -dirs[i] * (CreatureManager.Instance.partitionSize / hit.distance);
             }
 
-            center += (CreatureManager.Instance.target - transform.position).normalized;
+            center += CreatureManager.Instance.target - transform.position;
 
             cohesion /= neighbors.Count;
             cohesion -= transform.position;
@@ -61,7 +61,7 @@ public class Fish : MonoBehaviour, ICreature
             alignment = alignment.normalized * CreatureManager.Instance.swarmAlignment;
             seperation *= CreatureManager.Instance.swarmSeperation * .001f;//.002f;
             avoidance *= CreatureManager.Instance.swarmAvoidance * .01f;
-            center *= CreatureManager.Instance.swarmCenter;
+            center *= CreatureManager.Instance.swarmCenter * .01f;
 
             Vector3 direction = (transform.forward + cohesion + alignment + seperation + avoidance + center).normalized;
 
@@ -83,6 +83,24 @@ public class Fish : MonoBehaviour, ICreature
         foreach (GameObject fish in neighbors)
         {
             // Gizmos.DrawLine(transform.position, fish.transform.position);
+        }
+
+        Vector3[] dirs = new Vector3[5] {
+                transform.forward,
+                Vector3.Slerp(transform.forward, transform.up, .3f),
+                Vector3.Slerp(transform.forward, -transform.up, .3f),
+                Vector3.Slerp(transform.forward, transform.right, .3f),
+                Vector3.Slerp(transform.forward, -transform.right, .3f)
+            };
+
+        foreach (Vector3 dir in dirs)
+        {
+            Gizmos.color = Color.green;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, dir, out hit, CreatureManager.Instance.partitionSize))
+                Gizmos.color = Color.red;
+
+            Gizmos.DrawLine(transform.position, transform.position + dir * 5f);
         }
     }
 }

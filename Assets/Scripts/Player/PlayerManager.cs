@@ -16,7 +16,7 @@ public class PlayerManager : MonoBehaviour
     {
         Instance = this;
         activePlayer = false;
-        playerPrefab = Resources.Load("Prefabs/Player") as GameObject;
+        playerPrefab = Resources.Load("Prefabs/Player/Player") as GameObject;
     }
 
     private void Update()

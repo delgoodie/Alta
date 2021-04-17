@@ -8,6 +8,11 @@ public class ChunkPlantManager : MonoBehaviour
     private int count;
     private List<GameObject> plants;
     private Mesh mesh;
+    [SerializeField]
+    private string[] plantTypes;
+    [SerializeField]
+    [Range(0, 1)]
+    private float[] plantProbabilities;
 
     private void Awake()
     {
@@ -32,13 +37,21 @@ public class ChunkPlantManager : MonoBehaviour
         ReleasePlants();
         for (int i = 0; i < count; i++)
         {
-            GameObject k = EntityManager.Instance.Retrieve("kelp");
-            if (k != null)
+            float r = Random.Range(0f, 1f), c = 0;
+            int j = 0;
+            while (c + plantProbabilities[j] < r)
+            {
+                c += plantProbabilities[j];
+                j++;
+                if (j >= plantProbabilities.Length) Debug.LogError("Invalid probability");
+            }
+            GameObject p = EntityManager.Instance.Retrieve(plantTypes[j]);
+            if (p != null)
             {
                 Ray site = RandomSurfaceRay();
-                k.transform.position = site.origin - site.direction * .1f;
-                k.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Random.rotation * Vector3.forward, site.direction), site.direction);
-                plants.Add(k);
+                p.transform.position = site.origin - site.direction * .1f;
+                p.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(Random.rotation * Vector3.forward, site.direction), site.direction);
+                plants.Add(p);
             }
         }
     }
@@ -46,9 +59,8 @@ public class ChunkPlantManager : MonoBehaviour
     public void ReleasePlants()
     {
         for (int i = 0; i < plants.Count; i++)
-        {
-            EntityManager.Instance.Release("kelp", plants[i]);
-        }
+            EntityManager.Instance.Release(plants[i]);
+
         plants.Clear();
     }
 }

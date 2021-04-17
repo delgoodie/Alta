@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Marcher))]
 public class Chunk : MonoBehaviour, IMarch, IEntity
 {
+    public string type { get; } = "chunk";
     [HideInInspector]
     public Marcher marcher;
     public Vector3Int coordinate;

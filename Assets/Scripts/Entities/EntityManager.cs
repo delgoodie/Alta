@@ -44,9 +44,9 @@ class EntityManager : MonoBehaviour
         else return null;
     }
 
-    public void Release(string key, GameObject entity)
+    public void Release(GameObject entity)
     {
         entity.SetActive(false);
-        pools[key].Enqueue(entity);
+        pools[entity.GetComponent<IEntity>().type].Enqueue(entity);
     }
 }

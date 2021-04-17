@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7d0e6c5e5c280c4a97f220fc5b6c776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RenderDistance: 4
+  RenderDistance: 5
   Size: 16
   RunChunkUpdate: 0
   EnableGizmos: 1
@@ -247,12 +247,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 224581665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 836707277}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &224581667
 MonoBehaviour:
@@ -268,13 +268,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   partitionSize: 20
   count: 60
-  radius: 30
-  swarmCohesion: 0.5
-  swarmAlignment: 0.1
-  swarmSeperation: 2
+  radius: 50
+  swarmCohesion: 0.01
+  swarmAlignment: 0.01
+  swarmSeperation: 0.1
   swarmAvoidance: 1
-  swarmCenter: 0.4
-  target: {x: -56.804268, y: -30.586723, z: 19.38371}
+  swarmCenter: 0.06
+  target: {x: 8, y: -40, z: 11}
 --- !u!1 &379132857
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,11 +365,17 @@ MonoBehaviour:
   - chunk
   - kelp
   - fish
+  - gem1
+  - barrel
+  - chest
   prefabs:
   - {fileID: 5894601676540839948, guid: 86ceb81c0f8c5c740b9e6425b732fece, type: 3}
   - {fileID: 4148193714496408516, guid: 5dd34a22281fce7448573fc487dd2916, type: 3}
   - {fileID: 3020370425042075687, guid: d1f919e5a9701574a9bb7be8f4d77b7d, type: 3}
-  counts: f401000088130000f4010000
+  - {fileID: 8908579365732070935, guid: 77d7a4c9bb0827c499a3f6f2f29d3d47, type: 3}
+  - {fileID: 3225638831472919579, guid: b3f7a730801276743944c2685742cfda, type: 3}
+  - {fileID: 4827450034892605626, guid: 6962a943df2d83248a84655c74efb38e, type: 3}
+  counts: 5802000088130000f40100000a0000000a0000000a000000
 --- !u!1 &836707276
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,8 +405,9 @@ Transform:
   m_Children:
   - {fileID: 422154469}
   - {fileID: 39126147}
+  - {fileID: 224581666}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &962314957
 GameObject:
@@ -488,7 +495,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1738412400
 GameObject:
@@ -619,7 +626,7 @@ Transform:
   - {fileID: 222301523}
   - {fileID: 962314958}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1836595113
 MonoBehaviour:
@@ -672,7 +679,7 @@ Transform:
   m_Children:
   - {fileID: 1738412401}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1992105161
 MonoBehaviour:
@@ -732,6 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 048c301b21623f64ab6b06276b118b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnPosition: {x: 8, y: -40, z: 11}
   spawnPlayer: 1
   tickSpan: 4
   tick: 0

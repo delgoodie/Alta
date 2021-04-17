@@ -2,6 +2,8 @@
 
 class GameManager : MonoBehaviour
 {
+    [SerializeField]
+    private Vector3 spawnPosition;
     public bool spawnPlayer;
     public int tickSpan;
     public int tick;
@@ -21,6 +23,7 @@ class GameManager : MonoBehaviour
     private int count5;
     private int count6;
     private Vector3Int previousPlayerChunk;
+
 
 
     private void Awake()
@@ -65,7 +68,7 @@ class GameManager : MonoBehaviour
         }
         else
         {
-            if (spawnPlayer && !ServiceScheduler.Instance.servicing) PlayerManager.Instance.CreatePlayer(Vector3.zero, Quaternion.identity);
+            if (spawnPlayer && !ServiceScheduler.Instance.servicing) PlayerManager.Instance.CreatePlayer(spawnPosition, Quaternion.identity);
         }
 
     }

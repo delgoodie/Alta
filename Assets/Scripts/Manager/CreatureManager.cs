@@ -109,8 +109,8 @@ class CreatureManager : MonoBehaviour
             {
                 for (int i = 0; i < pair.Value.Count; i++)
                 {
-                    EntityManager.Instance.Release(pair.Value[i].GetComponent<ICreature>().type, pair.Value[i]);
-                    creatures[pair.Value[i].GetComponent<ICreature>().type].Remove(pair.Value[i]);
+                    EntityManager.Instance.Release(pair.Value[i]);
+                    creatures[pair.Value[i].GetComponent<IEntity>().type].Remove(pair.Value[i]);
                 }
                 removes.Add(pair.Key);
                 pair.Value.Clear();
@@ -145,7 +145,7 @@ class CreatureManager : MonoBehaviour
                 if (!partitions.ContainsKey(coord))
                     partitions.Add(coord, new List<GameObject>());
                 partitions[coord].Add(f);
-                creatures[f.GetComponent<ICreature>().type].Add(f);
+                creatures[f.GetComponent<IEntity>().type].Add(f);
             }
         }
     }
