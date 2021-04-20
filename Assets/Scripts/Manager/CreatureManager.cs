@@ -145,6 +145,12 @@ class CreatureManager : MonoBehaviour
                 if (!partitions.ContainsKey(coord))
                     partitions.Add(coord, new List<GameObject>());
                 partitions[coord].Add(f);
+                if (f.GetComponent<IEntity>() == null)
+                {
+                    Debug.Log("IENTITY NULL");
+                    Debug.Log(f);
+                }
+                else if (creatures[f.GetComponent<IEntity>().type] == null) Debug.Log("NULL INDEX");
                 creatures[f.GetComponent<IEntity>().type].Add(f);
             }
         }

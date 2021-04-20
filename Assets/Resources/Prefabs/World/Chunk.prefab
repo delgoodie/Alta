@@ -135,14 +135,21 @@ MonoBehaviour:
   count: 30
   plantTypes:
   - kelp
-  - barrel
+  - shell
   - gem1
+  - sword
+  - barrel
   - chest
+  - anchor
+  - shipwreck
   plantProbabilities:
-  - 0.708
-  - 0.124
+  - 0.321
+  - 0.179
   - 0.131
-  - 0.138
+  - 0.097
+  - 0.084
+  - 0.077
+  - 0.165
 --- !u!114 &2080824054668787391
 MonoBehaviour:
   m_ObjectHideFlags: 0

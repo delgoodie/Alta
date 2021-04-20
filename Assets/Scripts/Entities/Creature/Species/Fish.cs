@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Fish : MonoBehaviour, ICreature
+public class Fish : MonoBehaviour, ICreature, IEntity
 {
     public float maxSpeed;
     [HideInInspector]
